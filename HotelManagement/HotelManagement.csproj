@@ -13,6 +13,8 @@
     <None Remove="Services\" />
     <None Remove="Views\Home\" />
     <None Remove="Views\Shared\" />
+    <None Remove="Views\Account\" />
+    <None Remove="Views\Error\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -24,6 +26,8 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Views\Home\" />
     <Folder Include="Views\Shared\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Error\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\" />
