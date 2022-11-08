@@ -8,11 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagement.Controllers
 {
-    [Route("home")]
+    [Route("house")]
     public class HomeController : Controller
     {
         // GET: /<controller>/
-        [Route("~/")]
         [Route("")]
         [Route("index")]
         public IActionResult Index()
