@@ -15,6 +15,7 @@
     <None Remove="Views\Shared\" />
     <None Remove="Views\Account\" />
     <None Remove="Views\Error\" />
+    <None Remove="Views\Room\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
@@ -28,6 +29,7 @@
     <Folder Include="Views\Shared\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Error\" />
+    <Folder Include="Views\Room\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\" />

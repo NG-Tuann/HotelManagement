@@ -8,20 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagement.Controllers
 {
-    [Route("taikhoan")]
-    public class AccountController : Controller
+    [Route("room")]
+    public class RoomController : Controller
     {
         // GET: /<controller>/
-        [Route("login")]
-        public IActionResult Login()
+        [Route("index")]
+        [Route("")]
+        [Route("~/")]
+        public IActionResult Index()
         {
-            return View("login");
-        }
-
-        [Route("register")]
-        public IActionResult Register()
-        {
-            return View("register");
+            return View();
         }
     }
 }

@@ -1,0 +1,447 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    Jquery and BS js
+*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+@*
+    Date picker
+*@
+<link rel="stylesheet" href="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
+<script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" defer></script>
+@*
+    Font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css" />
+@*
+    Toasts
+*@
+<script src="~/js/jquery.toast.min.js"></script>
+<link href="~/css/vertical-layout-light/jquery.toast.min.css" rel="stylesheet" />
+<script src="~/js/toastDemo.js"></script>
+@*
+    date picker from and to (da rang buoc ngay dat > 1 ngay so voi ngay hien tai va ngay to > ngay from)
+*@
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            setDate: new Date(),
+            format: 'dd/mm/yyyy',
+            todayHighlight: true,
+            autoclose: true,
+            startDate: 0,
+            minDate: 0,
+            maxDate: new Date()
+        });
+        $('.datepicker_from').datepicker({
+            setDate: new Date(),
+            format: 'dd/mm/yyyy',
+            todayHighlight: true,
+            autoclose: true,
+            startDate: '+1d',
+            minDate: new Date(),
+
+        });
+        $('.datepicker_to').datepicker({
+            @*setDate: new Date(),*@
+            format: 'dd/mm/yyyy',
+            todayHighlight: true,
+            autoclose: true,
+            startDate: '+2d',
+            minDate: 0,
+
+        });
+
+        $("#start").on("change", function (e) {
+            var secondDate = $("#start").datepicker("getDate");
+            secondDate.setDate(secondDate.getDate() + 1);
+            $("#end").datepicker("setStartDate", secondDate);
+            $("#end").datepicker("setDate", secondDate);
+        });
+
+
+        $("#end").on("change", function (e) {
+            var firstDate = $("#end").datepicker("getDate");
+            firstDate.setDate(firstDate.getDate() - 1);
+            $("#start").datepicker("setStartDate", firstDate);
+            $("#start").datepicker("setDate", firstDate);
+        });
+
+        $('#create_booking').click(function () {
+            showSuccessToast();
+            console.log("Hello");
+        });
+    });
+</script>
+
+<div class="row d-flex flex-wrap h-25">
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking">Room booking</button>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-block">Booking list</button>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-block">Checkin list</button>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-block">Customer list</button>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary btn-block">Create invoice</button>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
+        </div>
+    </div>
+</div>
+@*
+    So do phong cua khach san
+*@
+<div class="row justify-content-start overflow-auto">
+    <div class="col-xl-12 col-md-12 ">
+        @{
+            for (int i = 0; i < 10; i++)
+            {
+                <div class="row h-25 d-flex flex-wrap">
+                    <div class="col-md-2 col-sm-4">
+                        <button class="btn btn-lg btn-dark btn-block">Floor @(i + 1)</button>
+                    </div>
+                    @{
+                        for (int j = 1; j <= 5; j++)
+                        {
+                            <div class="col-lg-2 col-md-2 col-sm-4">
+                                <div class="dropdown">
+                                    <button class="btn btn-lg btn-primary dropdown-toggle btn-block" type="button" id="dropdownMenuSizeButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        @((i + 1) * 100 + j)
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
+                                        <h6 class="dropdown-header">Settings</h6>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
+                                        @* Checkin theo danh sach dat phong truoc *@
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
+                                        <a class="dropdown-item" href="#">Checkout</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="#">Add service</a>
+                                    </div>
+                                </div>
+                            </div> }
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+@*
+    Modal for filter date booking
+*@
+<div class="modal fade" id="filter_date_booking" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Choose booking date</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <p class="card-description">Format for date will go as follow:</p>
+                    <div class="input-group input-daterange d-flex align-items-center">
+                        <input type="text" class="form-control datepicker_from" id="start" value="dd-MM-yyyy">
+                        <div class="input-group-addon mx-4">to</div>
+                        <input type="text" class="form-control datepicker_to" id="end" value="dd-MM-yyyy">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Find available room</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*
+    Modal for create booking
+*@
+<div class="modal fade" id="create_booking_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid overflow-auto">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Registration information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Price</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date in</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_from" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Arrive at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date out plan</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_to" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Out at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Deposit</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Discount</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Room code</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Customer information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Identity card</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Full name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date of birth</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control datepicker" placeholder="dd/MM/yyyy">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Phone number</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="+84">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Gender</label>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked="">
+                                            Male
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2">
+                                            Female
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Nation</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <div class="form-group row">
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-primary">Add</button>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-light">Reset</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>List of customer:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Number</th>
+                                            <th>Customer</th>
+                                            <th>Identity num</th>
+                                            <th>Address</th>
+                                            <th>Nation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Nguyen Van A</td>
+                                            <td>012803812030</td>
+                                            <td>123 Abc Street</td>
+                                            <td>Viet Nam</td>
+                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
+                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="create_booking" data-bs-dismiss="modal">Booking</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*
+    Modal showing booking in order to check in
+*@
+<div class="modal fade" id="list_booking_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid overflow-auto">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>List of customer booking for this room:</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Search: </label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Date check in: </label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>List of booking:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Number</th>
+                                            <th>Booking Code</th>
+                                            <th>Customer name</th>
+                                            <th>Check in</th>
+                                            <th>Check out</th>
+                                            <th>Room code</th>
+                                            <th>Room type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>000012</td>
+                                            <td>Anh An</td>
+                                            <td>12/12/2022</td>
+                                            <td>15/12/2022</td>
+                                            <td>A102</td>
+                                            <td>Vip</td>
+                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
+                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
+                                            <td><button type="button" class="btn btn-primary" id="create_check_in" data-bs-dismiss="modal">Check in</button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="refresh" data-bs-dismiss="modal">Refresh</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
