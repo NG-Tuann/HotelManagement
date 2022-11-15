@@ -7,6 +7,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
 @*
+    Custom component
+*@
+<link rel="stylesheet" href="~/css/vertical-layout-light/custom_component.css" />
+@*
     Date picker
 *@
 <link rel="stylesheet" href="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
@@ -73,10 +77,32 @@
             showSuccessToast();
             console.log("Hello");
         });
+
+        $('.dropdown .room').click(function () {
+            var roomCheckIn = $(this).attr('id');
+            console.log(roomCheckIn);
+            $('#roomCheck').val(roomCheckIn);
+        });
+
+        $('#create_check_in_btn').click(function () {
+            var roomCheck = $('#roomCheck').val();
+            console.log(roomCheck);
+            $('#' + roomCheck).removeClass("custom_room_available");
+            console.log("click");
+            $('#' + roomCheck).addClass("custom_room_check_in");
+            $('#checkin_' + roomCheck).addClass("disabled");
+            $('#' + roomCheck + "_checkIn").html('<div class="stayInfo"></div>');
+            console.log("#" + roomCheck + "_checkIn");
+            $('.stayInfo').text('16h - 20h');
+        });
+
+        @*$('#checkout_' + roomCheck).click(function () {
+
+        });*@
     });
 </script>
 
-<div class="row d-flex flex-wrap h-25">
+@*<div class="row d-flex flex-wrap h-25">
     <div class="col-md-2">
         <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking">Room booking</button>
     </div>
@@ -97,7 +123,7 @@
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
         </div>
     </div>
-</div>
+</div>*@
 @*
     So do phong cua khach san
 *@
@@ -108,22 +134,36 @@
             {
                 <div class="row h-25 d-flex flex-wrap">
                     <div class="col-md-2 col-sm-4">
-                        <button class="btn btn-lg btn-dark btn-block">Floor @(i + 1)</button>
+                        <div class="floor custom_floor" id="floor@(i+1)">Floor @(i + 1)</div>
                     </div>
                     @{
                         for (int j = 1; j <= 5; j++)
                         {
                             <div class="col-lg-2 col-md-2 col-sm-4">
                                 <div class="dropdown">
-                                    <button class="btn btn-lg btn-primary dropdown-toggle btn-block" type="button" id="dropdownMenuSizeButton1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="room custom_room_available dropdown-toggle" id="room@((i + 1) * 100 + j)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         @((i + 1) * 100 + j)
-                                    </button>
+                                        <!-- Room type show -->
+                                        @{
+                                            if (i % 2 == 0)
+                                            {
+                                                <div class="roomType">Single Room</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="roomType">Double Room</div>
+                                            }
+                                        }
+                                        <!-- If checked in then show stay time info -->
+                                        <span id="room@((i + 1) * 100 + j)_checkIn"></span>
+                                    </div>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
                                         <h6 class="dropdown-header">Settings</h6>
                                         <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
                                         @* Checkin theo danh sach dat phong truoc *@
                                         <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
-                                        <a class="dropdown-item" href="#">Checkout</a>
+                                        <a class="dropdown-item" id="checkin_room@((i + 1) * 100 + j)" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
+                                        <a class="dropdown-item" id="checkout_room@((i + 1) * 100 + j)" href="#">Check out</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="#">Add service</a>
                                     </div>
@@ -383,7 +423,7 @@
                             <h3>List of customer booking for this room:</h3>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group row">
@@ -429,7 +469,7 @@
                                             <td>Vip</td>
                                             <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
                                             <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
-                                            <td><button type="button" class="btn btn-primary" id="create_check_in" data-bs-dismiss="modal">Check in</button></td>
+                                            <td><button type="button" class="btn btn-primary" id="create_checkin" data-bs-dismiss="modal">Check in</button></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -440,6 +480,411 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-info" id="refresh" data-bs-dismiss="modal">Refresh</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*
+    Modal for create checkin
+*@
+<div class="modal fade" id="create_check_in" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid overflow-auto">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Registration information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Price</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date in</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_from" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Arrive at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date out plan</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_to" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Out at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Deposit</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Discount</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Room code</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Customer information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Identity card</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Full name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date of birth</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control datepicker" placeholder="dd/MM/yyyy">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Phone number</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="+84">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Gender</label>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked="">
+                                            Male
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2">
+                                            Female
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Nation</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <div class="form-group row">
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-primary">Add</button>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-light">Reset</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>List of customer:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Number</th>
+                                            <th>Customer</th>
+                                            <th>Identity num</th>
+                                            <th>Address</th>
+                                            <th>Nation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Nguyen Van A</td>
+                                            <td>012803812030</td>
+                                            <td>123 Abc Street</td>
+                                            <td>Viet Nam</td>
+                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
+                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="roomCheck" />
+                <button type="button" class="btn btn-primary" id="create_check_in_btn" data-bs-dismiss="modal">Check in</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*
+    Modal for create invoice and checkout
+*@
+<div class="modal fade" id="create_check_out" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row-fluid overflow-auto">
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Registration information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Price</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date in</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_from" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Arrive at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date out plan</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control datepicker_to" id="start" placeholder="dd/MM/yyyy">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Out at</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="00:00">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Deposit</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Discount</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder=".00 $">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Room code</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>Customer information:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Identity card</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Full name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Address</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Description</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Date of birth</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control datepicker" placeholder="dd/MM/yyyy">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Phone number</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" placeholder="+84">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Gender</label>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked="">
+                                            Male
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2">
+                                            Female
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Nation</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label"></label>
+                                <div class="col-sm-10">
+                                    <div class="form-group row">
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-primary">Add</button>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <button class="form-control btn btn-light">Reset</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="margin-bottom:20px;">
+                            <h3>List of customer:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Number</th>
+                                            <th>Customer</th>
+                                            <th>Identity num</th>
+                                            <th>Address</th>
+                                            <th>Nation</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Nguyen Van A</td>
+                                            <td>012803812030</td>
+                                            <td>123 Abc Street</td>
+                                            <td>Viet Nam</td>
+                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
+                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="roomCheck" />
+                <button type="button" class="btn btn-primary" id="create_check_in_btn" data-bs-dismiss="modal">Check in</button>
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
