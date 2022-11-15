@@ -1,0 +1,73 @@
+﻿.custom_room_available {
+    position:relative;
+    color: #fff;
+    background-color: #28a745;
+    border-color: #4B49AC;
+    padding: 2rem 3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.1875rem;
+    text-align: center
+}
+
+.room .roomType {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #FFC107;
+    width: 70px;
+    height: 20px;
+    text-align: center;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 1.2rem;
+    border-top-right-radius: 0.1875rem;
+}
+
+.custom_room_check_in .stayInfo {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #FFC107;
+    width: 70px;
+    height: 20px;
+    text-align: center;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 1.2rem;
+    border-bottom-left-radius: 0.1875rem;
+}
+
+.custom_room_check_in {
+    position: relative;
+    color: #fff;
+    background-color: #DC3545;
+    border-color: #ff1414;
+    padding: 2rem 3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.1875rem;
+    text-align: center
+}
+
+.custom_floor {
+    color: #fff;
+    background-color: #282f3a;
+    border-color: #282f3a;
+    padding: 2rem 3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.1875rem;
+    text-align: center
+}
+
+.custom_floor:hover {
+    color: #fff;
+    background-color: #181d23;
+    border-color: #13171c;
+    padding: 2rem 3rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.1875rem;
+    text-align: center
+}
