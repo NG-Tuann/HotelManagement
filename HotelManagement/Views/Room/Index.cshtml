@@ -101,78 +101,88 @@
         });*@
     });
 </script>
-
-@*<div class="row d-flex flex-wrap h-25">
-    <div class="col-md-2">
-        <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking">Room booking</button>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary btn-block">Booking list</button>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary btn-block">Checkin list</button>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary btn-block">Customer list</button>
-    </div>
-    <div class="col-md-2">
-        <button class="btn btn-primary btn-block">Create invoice</button>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-        </div>
-    </div>
-</div>*@
-@*
-    So do phong cua khach san
-*@
-<div class="row justify-content-start overflow-auto">
-    <div class="col-xl-12 col-md-12 ">
-        @{
-            for (int i = 0; i < 10; i++)
-            {
-                <div class="row h-25 d-flex flex-wrap">
-                    <div class="col-md-2 col-sm-4">
-                        <div class="floor custom_floor" id="floor@(i+1)">Floor @(i + 1)</div>
+<div class="row-fluid">
+    <div class="col-xl-12 col-md-12">
+        <div class="row d-flex flex-wrap overflow-auto">
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-dark btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking">Room booking</button>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-dark btn-block">Booking list</button>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-dark btn-block">Checkin list</button>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-dark btn-block">Customer list</button>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-dark btn-block">Create invoice</button>
+            </div>
+            @*<div class="row">
+                    <div class="col-md-12">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
                     </div>
-                    @{
-                        for (int j = 1; j <= 5; j++)
-                        {
-                            <div class="col-lg-2 col-md-2 col-sm-4">
-                                <div class="dropdown">
-                                    <div class="room custom_room_available dropdown-toggle" id="room@((i + 1) * 100 + j)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        @((i + 1) * 100 + j)
-                                        <!-- Room type show -->
-                                        @{
-                                            if (i % 2 == 0)
-                                            {
-                                                <div class="roomType">Single Room</div>
-                                            }
-                                            else
-                                            {
-                                                <div class="roomType">Double Room</div>
-                                            }
-                                        }
-                                        <!-- If checked in then show stay time info -->
-                                        <span id="room@((i + 1) * 100 + j)_checkIn"></span>
-                                    </div>
+                </div>*@
+        </div>
+        @*
+            So do phong cua khach san
+        *@
+        <div style="margin-top:20px;" class="row justify-content-start overflow-auto">
+            <div class="col-xl-12 col-md-12 ">
+                @{
+                    for (int i = 0; i < 10; i++)
+                    {
+                        <div class="row d-flex flex-wrap mb-3">
+                            <div class="col-md-2 col-sm-4 mb-2">
+                                <div class="drop-down">
+                                    <div class="floor custom_floor dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="floor@(i+1)">Floor @(i + 1)</div>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
-                                        <h6 class="dropdown-header">Settings</h6>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
-                                        @* Checkin theo danh sach dat phong truoc *@
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
-                                        <a class="dropdown-item" id="checkin_room@((i + 1) * 100 + j)" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
-                                        <a class="dropdown-item" id="checkout_room@((i + 1) * 100 + j)" href="#">Check out</a>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_room">Create room</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#">Add service</a>
+                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_room">Change floor</a>
                                     </div>
                                 </div>
-                            </div> }
+                            </div>
+                            @{
+                                for (int j = 1; j <= 5; j++)
+                                {
+                                    <div class="col-lg-2 col-md-2 col-sm-4 mb-3">
+                                        <div class="dropdown">
+                                            <div class="room custom_room_available dropdown-toggle" id="room@((i + 1) * 100 + j)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                @((i + 1) * 100 + j)
+                                                <!-- Room type show -->
+                                                @{
+                                                    if (i % 2 == 0)
+                                                    {
+                                                        <div class="roomType">Single Room</div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="roomType">Double Room</div>
+                                                    }
+                                                }
+                                                <!-- If checked in then show stay time info -->
+                                                <span id="room@((i + 1) * 100 + j)_checkIn"></span>
+                                            </div>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
+                                                <h6 class="dropdown-header">Settings</h6>
+                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
+                                                @* Checkin theo danh sach dat phong truoc *@
+                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
+                                                <a class="dropdown-item" id="checkin_room@((i + 1) * 100 + j)" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
+                                                <a class="dropdown-item" id="checkout_room@((i + 1) * 100 + j)" href="#">Check out</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item" href="#">Add service</a>
+                                            </div>
+                                        </div>
+                                    </div> }
+                            }
+                        </div>
                     }
-                </div>
-            }
-        }
+                }
+            </div>
+        </div>
     </div>
 </div>
 @*
