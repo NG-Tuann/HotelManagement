@@ -10,19 +10,25 @@
     text-align: center
 }
 
+.custom_room_available:hover {
+    background-color: #46a146;
+    border-color: #429842;
+}
+
 .room .roomType {
     position: absolute;
     top: 0;
     right: 0;
-    border-width: 10px 0px 10px 8px;
+    background-color: rgba(255,216,64,0.94);
+    /*    border-width: 10px 0px 10px 8px;
     border-style: solid;
-    border-color: rgba(255,216,64,0.94) rgba(255,216,64,0.94) rgba(255,216,64,0.94) transparent;
+    border-color: rgba(255,216,64,0.94) rgba(255,216,64,0.94) rgba(255,216,64,0.94) transparent;*/
     width: 70px;
     height: 20px;
     text-align: center;
     color: #333;
-    font-size: 0.5rem;
-    line-height: 0.2rem;
+    font-size: 0.6rem;
+    line-height: 1.2rem;
     border-top-right-radius: 0.1875rem;
 }
 
@@ -30,15 +36,16 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    border-width: 10px 8px 10px 0px;
+    background-color: rgba(255,216,64,0.94);
+    /*    border-width: 10px 8px 10px 0px;
     border-style: solid;
-    border-color: rgba(255,216,64,0.94) transparent rgba(255,216,64,0.94) rgba(255,216,64,0.94);
+    border-color: rgba(255,216,64,0.94) transparent rgba(255,216,64,0.94) rgba(255,216,64,0.94);*/
     width: 70px;
     height: 20px;
     text-align: center;
     color: #333;
     font-size: 0.6rem;
-    line-height: 0.2rem;
+    line-height: 1.2rem;
     border-bottom-left-radius: 0.1875rem;
 }
 
@@ -56,8 +63,8 @@
 
 .custom_floor {
     color: #fff;
-    background-color: #282f3a;
-    border-color: #282f3a;
+    background-color: #4B49AC;
+    border-color: #4B49AC;
     padding: 2rem 3rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -67,8 +74,8 @@
 
 .custom_floor:hover {
     color: #fff;
-    background-color: #181d23;
-    border-color: #13171c;
+    background-color: #3f3e91;
+    border-color: #3b3a88;
     padding: 2rem 3rem;
     font-size: 0.875rem;
     line-height: 1.5;

@@ -1,15 +1,16 @@
-﻿@{
+﻿@using HotelManagement.Models
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@*
+    Custom component
+*@
+<link rel="stylesheet" href="~/css/vertical-layout-light/custom_component.css" />
 @*
     Jquery and BS js
 *@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-@*
-    Custom component
-*@
-<link rel="stylesheet" href="~/css/vertical-layout-light/custom_component.css" />
 @*
     Date picker
 *@
@@ -28,79 +29,15 @@
 @*
     date picker from and to (da rang buoc ngay dat > 1 ngay so voi ngay hien tai va ngay to > ngay from)
 *@
-<script>
-    $(document).ready(function () {
-        $('.datepicker').datepicker({
-            setDate: new Date(),
-            format: 'dd/mm/yyyy',
-            todayHighlight: true,
-            autoclose: true,
-            startDate: 0,
-            minDate: 0,
-            maxDate: new Date()
-        });
-        $('.datepicker_from').datepicker({
-            setDate: new Date(),
-            format: 'dd/mm/yyyy',
-            todayHighlight: true,
-            autoclose: true,
-            startDate: '+1d',
-            minDate: new Date(),
+@**
+    custom jquery
+*@
+<script src="~/js/my_lib.js"></script>
+@*
+    font awesome
+*@
 
-        });
-        $('.datepicker_to').datepicker({
-            @*setDate: new Date(),*@
-            format: 'dd/mm/yyyy',
-            todayHighlight: true,
-            autoclose: true,
-            startDate: '+2d',
-            minDate: 0,
-
-        });
-
-        $("#start").on("change", function (e) {
-            var secondDate = $("#start").datepicker("getDate");
-            secondDate.setDate(secondDate.getDate() + 1);
-            $("#end").datepicker("setStartDate", secondDate);
-            $("#end").datepicker("setDate", secondDate);
-        });
-
-
-        $("#end").on("change", function (e) {
-            var firstDate = $("#end").datepicker("getDate");
-            firstDate.setDate(firstDate.getDate() - 1);
-            $("#start").datepicker("setStartDate", firstDate);
-            $("#start").datepicker("setDate", firstDate);
-        });
-
-        $('#create_booking').click(function () {
-            showSuccessToast();
-            console.log("Hello");
-        });
-
-        $('.dropdown .room').click(function () {
-            var roomCheckIn = $(this).attr('id');
-            console.log(roomCheckIn);
-            $('#roomCheck').val(roomCheckIn);
-        });
-
-        $('#create_check_in_btn').click(function () {
-            var roomCheck = $('#roomCheck').val();
-            console.log(roomCheck);
-            $('#' + roomCheck).removeClass("custom_room_available");
-            console.log("click");
-            $('#' + roomCheck).addClass("custom_room_check_in");
-            $('#checkin_' + roomCheck).addClass("disabled");
-            $('#' + roomCheck + "_checkIn").html('<div class="stayInfo"></div>');
-            console.log("#" + roomCheck + "_checkIn");
-            $('.stayInfo').text('16h - 20h');
-        });
-
-        @*$('#checkout_' + roomCheck).click(function () {
-
-        });*@
-    });
-</script>
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css">
 <div class="row-fluid">
     <div class="col-xl-12 col-md-12">
         <div class="row d-flex flex-wrap overflow-auto">
@@ -116,14 +53,6 @@
             <div class="col-md-2 mb-3">
                 <button class="btn btn-outline-dark btn-block">Customer list</button>
             </div>
-            <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-dark btn-block">Create invoice</button>
-            </div>
-            @*<div class="row">
-                    <div class="col-md-12">
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam</p>
-                    </div>
-                </div>*@
         </div>
         @*
             So do phong cua khach san
@@ -131,56 +60,57 @@
         <div style="margin-top:20px;" class="row justify-content-start overflow-auto">
             <div class="col-xl-12 col-md-12 ">
                 @{
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < ViewBag.tangs.Count; i++)
                     {
                         <div class="row d-flex flex-wrap mb-3">
                             <div class="col-md-2 col-sm-4 mb-2">
                                 <div class="drop-down">
-                                    <div class="floor custom_floor dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="floor@(i+1)">Floor @(i + 1)</div>
+                                    <div class="floor custom_floor dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="floor@(i+1)">Tầng @(ViewBag.tangs[i].Tang1)</div>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_room">Create room</a>
+                                        <a class="dropdown-item floor-number" href="#" data-bs-toggle="modal" id="@(ViewBag.tangs[i].Tang1)" data-bs-target="#create_room">Tạo phòng</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_room">Change floor</a>
+                                        <a class="dropdown-item floor-number" href="#" data-bs-toggle="modal" id="@(ViewBag.tangs[i].Tang1)" data-bs-target="#confirm_delete_floor">Xoá tầng</a>
                                     </div>
                                 </div>
                             </div>
-                            @{
-                                for (int j = 1; j <= 5; j++)
-                                {
-                                    <div class="col-lg-2 col-md-2 col-sm-4 mb-3">
-                                        <div class="dropdown">
-                                            <div class="room custom_room_available dropdown-toggle" id="room@((i + 1) * 100 + j)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                @((i + 1) * 100 + j)
-                                                <!-- Room type show -->
-                                                @{
-                                                    if (i % 2 == 0)
-                                                    {
-                                                        <div class="roomType">Single Room</div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="roomType">Double Room</div>
-                                                    }
-                                                }
-                                                <!-- If checked in then show stay time info -->
-                                                <span id="room@((i + 1) * 100 + j)_checkIn"></span>
-                                            </div>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
-                                                <h6 class="dropdown-header">Settings</h6>
-                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
-                                                @* Checkin theo danh sach dat phong truoc *@
-                                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
-                                                <a class="dropdown-item" id="checkin_room@((i + 1) * 100 + j)" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
-                                                <a class="dropdown-item" id="checkout_room@((i + 1) * 100 + j)" href="#">Check out</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#">Add service</a>
-                                            </div>
+                            @foreach (var p in ((IEnumerable<Phong>)ViewBag.tangs[i].Phongs).OrderBy(i => i.PhongSo))
+                            {
+                                <div class="col-lg-2 col-md-2 col-sm-4 mb-3">
+                                    <div class="dropdown">
+                                        <div class="room custom_room_available dropdown-toggle" id="room@(p.PhongSo)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            @p.PhongSo
+                                            <!-- Room type show -->
+                                            <div class="roomType">@p.MaLpNavigation.KhongGian</div>
+                                            <!-- If checked in then show stay time info -->
+                                            <span id="room@(p.PhongSo)_checkIn"></span>
                                         </div>
-                                    </div> }
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
+                                            <h6 class="dropdown-header">Settings</h6>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#create_booking_modal">Create booking</a>
+                                            @* Checkin theo danh sach dat phong truoc *@
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
+                                            <a class="dropdown-item" id="checkin_room@(p.PhongSo)" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
+                                            <a class="dropdown-item" id="checkout_room@(p.PhongSo)" href="#">Check out</a>
+                                            <a class="dropdown-item" id="@(p.PhongSo)" href="#" data-bs-toggle="modal" data-bs-target="#confirm_delete_room">Xoá phòng</a>
+                                            <a class="dropdown-item" id="@(p.PhongSo)" href="#" data-bs-toggle="modal" data-bs-target="#update_room">Xem / Cập nhật phòng</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Add service</a>
+                                        </div>
+                                    </div>
+                                </div>
                             }
+
                         </div>
                     }
                 }
+            </div>
+        </div>
+        @*
+            Add more floor
+        *@
+        <div class="row">
+            <div class="col-md-2">
+                <button class="btn btn-outline-dark btn-block" data-bs-toggle="modal" data-bs-target="#create_floor">Thêm tầng</button>
             </div>
         </div>
     </div>
@@ -897,6 +827,248 @@
                 <button type="button" class="btn btn-primary" id="create_check_in_btn" data-bs-dismiss="modal">Check in</button>
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
             </div>
+        </div>
+    </div>
+</div>
+@*
+    Modal for create floor
+*@
+<div class="modal fade" id="create_floor" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Thêm tầng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="floor" asp-action="create">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="row-fluid">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Mã tầng: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="id" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Tầng thứ: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="floor" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Tạo thêm tầng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*
+    Modal for create room
+*@
+<div class="modal fade" id="create_room" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Thêm phòng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="room" asp-action="create">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="row-fluid">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Mã phòng: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="room_id" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Phòng số: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="room_number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Tầng thứ: </label>
+                                    <label class="col-md-9 col-form-label" id="floor_number"></label>
+                                    <input type="hidden" name="floor_number" id="floor_number_id" />
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Loại: </label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" name="room_type_id">
+                                            <option value="0" selected="selected">Chọn loại phòng</option>
+                                            @{
+                                                foreach (var loaiPhong in ViewBag.loaiPhongs)
+                                                {
+                                                    <option value="@loaiPhong.Malp">@loaiPhong.LoaiPhong1 - @loaiPhong.KhongGian</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Tình trạng: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" name="room_status" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Tạo thêm phòng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*
+    Modal for confirm room delete
+*@
+<div class="modal fade" id="confirm_delete_room" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Xác nhận xoá phòng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="room" asp-action="delete">
+                <div class="row-fluid">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <label class="col-md-7 col-form-label ml-2">Bạn có chắc chắn muốn xoá đi phòng: </label>
+                            <label class="col-md-2 col-form-label" id="delete_room" style="color:red"></label>
+                            <input type="hidden" name="room_id" id="delete_room_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xoá phòng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*
+    Modal for update room
+*@
+<div class="modal fade" id="update_room" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Cập nhật phòng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="room" asp-action="update">
+                <div class="modal-body">
+                    <div class="card-body">
+                        <div class="row-fluid">
+                            <div class="col-md-12">
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Mã phòng: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" id="room_id_update" name="room_id" readonly class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Phòng số: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" id="room_number_update" name="room_number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Tầng thứ: </label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" id="floor_number_update" name="floor_number">
+                                            @{
+                                                foreach (var tang in ViewBag.tangs)
+                                                {
+                                                    <option value="@tang.Matang">@tang.Tang1</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Loại: </label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" id="room_type_id_update" name="room_type_id">
+                                            @{
+                                                foreach (var loaiPhong in ViewBag.loaiPhongs)
+                                                {
+                                                    <option value="@loaiPhong.Malp">@loaiPhong.LoaiPhong1 - @loaiPhong.KhongGian</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-md-3 col-form-label">Tình trạng: </label>
+                                    <div class="col-md-9">
+                                        <input type="text" id="room_status_update" name="room_status" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Cập nhật</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*
+    Modal for confirm floor delete
+*@
+<div class="modal fade" id="confirm_delete_floor" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Xác nhận xoá tầng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="floor" asp-action="delete">
+                <div class="row-fluid">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <label class="col-md-7 col-form-label ml-2">Bạn có chắc chắn muốn xoá đi tầng: </label>
+                            <label class="col-md-2 col-form-label" id="delete_floor" style="color:red"></label>
+                            <input type="hidden" name="floor_id" id="delete_floor_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xoá tầng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
