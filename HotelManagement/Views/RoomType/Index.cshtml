@@ -1,0 +1,501 @@
+﻿@using HotelManagement.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    Jquery and BS js
+*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+@*
+    Date picker
+*@
+<link rel="stylesheet" href="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
+<script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" defer></script>
+@*
+    Font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css" />
+@*
+    custom jquery
+*@
+<script src="~/js/my_lib.js"></script>
+@*
+    font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css">
+@*
+    Toasts
+*@
+<script src="~/js/jquery.toast.min.js"></script>
+<link href="~/css/vertical-layout-light/jquery.toast.min.css" rel="stylesheet" />
+<script src="~/js/toastDemo.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ('@ViewBag.message' == "update_room_type_success") {
+            console.log("update_room_type_success");
+            updateRoomTypeSuccessToast();
+        }
+
+        if ('@ViewBag.message' == "create_room_type_success") {
+            console.log("create_room_type_success");
+            createRoomTypeSuccessToast();
+        }
+    });
+</script>
+<div class="row-fluid">
+    <div class="col-xl-12 col-md-12">
+        <div class="row d-flex flex-wrap justify-content-end">
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-outline-info btn-block">Làm mới <i class="fa fa-refresh"></i></button>
+            </div>
+            <div class="col-md-2 mb-3">
+                <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#create_room_type">Thêm loại phòng</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Không gian</th>
+                                <th>Loại phòng</th>
+                                <th>Cài đặt giá</th>
+                                <th>Qui định phụ trội</th>
+                                <th>Thời gian hiệu lực</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var lp in ViewBag.loaiPhongs)
+                            {
+                                <tr>
+                                    <td>@lp.KhongGian</td>
+                                    <td>@lp.LoaiPhong1</td>
+                                    <td>
+                                        <ul>
+                                            <li>Giá theo giờ: @lp.MaGiaNavigation.GiaTheoGio</li>
+                                            <li>Giá theo ngày: @lp.MaGiaNavigation.GiaTheoNgay</li>
+                                            <li>Giá theo tuần: @lp.MaGiaNavigation.GiaTheoTuan</li>
+                                            <li>Giá theo tháng: @lp.MaGiaNavigation.GiaTheoThang</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>Check out quá 1h: @lp.MaGiaNavigation.Qua_1h</li>
+                                            <li>Check out quá 1h: @lp.MaGiaNavigation.Qua_2h</li>
+                                            <li>Check in sớm 3h: @lp.MaGiaNavigation.Truoc_3h</li>
+                                            <li>Check in sớm 4h: @lp.MaGiaNavigation.Truoc_4h</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        @lp.MaGiaNavigation.NgayHieuLucBd.ToString("dd/MM/yyyy") - @lp.MaGiaNavigation.NgayHieuLucKt.ToString("dd/MM/yyyy")
+                                    </td>
+                                    <td class="loai_phong_action">
+                                        <a class="action_edit" id="@lp.Malp" data-bs-toggle="modal" data-bs-target="#update_room_type"><i class="fa fa-edit text-info"></i></a>
+                                        <br />
+                                        <a href="#"><i class="fa fa-remove text-danger"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*
+    modal for create room type
+*@
+<div class="modal fade" id="create_room_type" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" asp-controller="roomtype" asp-action="create">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid overflow-auto">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Cài đặt</h4>
+                                    <p class="card-description">Cài đặt thông tin loại phòng gồm 3 phần:</p>
+                                    <div class="mt-4">
+                                        <div class="accordion accordion-solid-header" id="accordion-4" role="tablist">
+                                            @* Cai dat thong tin loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-10">
+                                                    <h6 class="mb-0">
+                                                        <a data-bs-toggle="collapse" href="#collapse-10" aria-expanded="true" aria-controls="collapse-10" class="">
+                                                            Thêm thông tin về loại phòng
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-10" class="collapse show" role="tabpanel" aria-labelledby="heading-10" data-parent="#accordion-4" style="">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Loại phòng</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="loai_phong" class="form-control">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Không gian</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="khong_gian" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Số giường</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="so_giuong" class="form-control">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Số người</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="so_nguoi" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-10" aria-expanded="true" aria-controls="collapse-10" class="" style="color:#333;text-decoration:none;"><i class="fa fa-angle-double-right"></i>  Kế tiếp</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Cai dat gia cua loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-11">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapsed" data-bs-toggle="collapse" href="#collapse-11" aria-expanded="false" aria-controls="collapse-11">
+                                                            Thêm quy định về giá
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-11" class="collapse" role="tabpanel" aria-labelledby="heading-11" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_gio" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo ngày</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_ngay" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tuần</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_tuan" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tháng</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_thang" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực bắt đầu</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_bd" class="form-control datepicker_from" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực kết thúc</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_kt" class="form-control datepicker_to" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-11" aria-expanded="true" aria-controls="collapse-11" class="" style="color: #333; text-decoration: none;"><i class="fa fa-angle-double-right"></i>  Kế tiếp</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Cai dat quy dinh ve phu troi *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-12">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapsed" data-bs-toggle="collapse" href="#collapse-12" aria-expanded="false" aria-controls="collapse-12">
+                                                            Thêm quy định về phụ trội
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-12" class="collapse" role="tabpanel" aria-labelledby="heading-12" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label">Phụ trội trễ giờ check out:</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Quá 1 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="qua_1h" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Quá 2 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="qua_2h" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label text-danger ml-2">Nếu ở quá qui định trên sẽ tính thành 1 ngày</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label">Phụ trội check in sớm:</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Trước 3 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="truoc_3h" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Trước 4 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="truoc_4h" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label text-danger ml-2">Nếu ở sớm quá qui định trên sẽ tính thành 1 ngày</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-12" aria-expanded="true" aria-controls="collapse-12" class="" style="color:#333;text-decoration:none;"><i class="fa fa-angle-double-right"></i>  Hoàn thành</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="create_booking" data-bs-dismiss="modal">Thêm loại phòng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@*
+    modal for edit room type
+*@
+<div class="modal fade" id="update_room_type" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+        <form method="post" asp-controller="roomtype" asp-action="update">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid overflow-auto">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Cài đặt</h4>
+                                    <p class="card-description">Cài đặt thông tin loại phòng gồm 3 phần:</p>
+                                    <div class="mt-4">
+                                        <div class="accordion accordion-solid-header" id="accordion-4" role="tablist">
+                                            @* Cai dat thong tin loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-10">
+                                                    <h6 class="mb-0">
+                                                        <a data-bs-toggle="collapse" href="#collapse-10" aria-expanded="true" aria-controls="collapse-10" class="">
+                                                            Cập nhật thông tin về loại phòng
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-10" class="collapse show" role="tabpanel" aria-labelledby="heading-10" data-parent="#accordion-4" style="">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Loại phòng</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="loai_phong" id="loai_phong_update" class="form-control">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Không gian</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="khong_gian" id="khong_gian_update" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Số giường</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="so_giuong" id="so_giuong_update" class="form-control">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Số người</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="so_nguoi" id="so_nguoi_update" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-10" aria-expanded="true" aria-controls="collapse-10" class="" style="color:#333;text-decoration:none;"><i class="fa fa-angle-double-right"></i>  Kế tiếp</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Cai dat gia cua loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-11">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapsed" data-bs-toggle="collapse" href="#collapse-11" aria-expanded="false" aria-controls="collapse-11">
+                                                            Cập nhật quy định về giá
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-11" class="collapse" role="tabpanel" aria-labelledby="heading-11" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_gio" id="gia_theo_gio_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo ngày</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_ngay" id="gia_theo_ngay_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tuần</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_tuan" id="gia_theo_tuan_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tháng</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_thang" id="gia_theo_thang_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực bắt đầu</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_bd" id="ngay_hieu_luc_bd_update" class="form-control datepicker_from" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực kết thúc</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_kt" id="ngay_hieu_luc_kt_update" class="form-control datepicker_to" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-11" aria-expanded="true" aria-controls="collapse-11" class="" style="color: #333; text-decoration: none;"><i class="fa fa-angle-double-right"></i>  Kế tiếp</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Cai dat quy dinh ve phu troi *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-12">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapsed" data-bs-toggle="collapse" href="#collapse-12" aria-expanded="false" aria-controls="collapse-12">
+                                                            Cập nhật quy định về phụ trội
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-12" class="collapse" role="tabpanel" aria-labelledby="heading-12" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label">Phụ trội trễ giờ check out:</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Quá 1 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="qua_1h" id="qua_1h_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Quá 2 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="qua_2h" id="qua_2h_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label text-danger ml-2">Nếu ở quá qui định trên sẽ tính thành 1 ngày</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label">Phụ trội check in sớm:</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Trước 3 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="truoc_3h" id="truoc_3h_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Trước 4 giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="truoc_4h" id="truoc_4h_update" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-md-12 col-form-label text-danger ml-2">Nếu ở sớm quá qui định trên sẽ tính thành 1 ngày</label>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-12" aria-expanded="true" aria-controls="collapse-12" class="" style="color:#333;text-decoration:none;"><i class="fa fa-angle-double-right"></i>  Hoàn thành</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="update_roomtype_id" name="update_roomtype_id" />
+                    <input type="hidden" id="update_price_id" name="update_price_id" />
+                    <button type="submit" class="btn btn-primary" id="create_booking" data-bs-dismiss="modal">Cập nhật loại phòng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>

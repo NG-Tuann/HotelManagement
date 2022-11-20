@@ -1,13 +1,26 @@
 (function($) {
-  showSuccessToast = function() {
+  updateRoomTypeSuccessToast = function() {
     'use strict';
       resetToastPosition();
     $.toast({
-      heading: 'Success',
-      text: 'And these were just the basic demos! Scroll down to check further details on how to customize the output.',
+      heading: 'Cập nhật thành công',
+      text: 'Loại phòng cùng với cài đặt giá đã được cập nhật thành công, hãy kiểm tra.',
       showHideTransition: 'slide',
       icon: 'success',
-      loaderBg: '#f96868',
+      loaderBg: '#28a745',
+      position: 'top-right'
+    })
+  };
+
+  createRoomTypeSuccessToast = function() {
+    'use strict';
+      resetToastPosition();
+    $.toast({
+      heading: 'Thêm thành công',
+      text: 'Loại phòng cùng với cài đặt giá đã được thêm thành công, hãy kiểm tra.',
+      showHideTransition: 'slide',
+      icon: 'success',
+      loaderBg: '#28a745',
       position: 'top-right'
     })
   };

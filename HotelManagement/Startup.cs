@@ -7,16 +7,34 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using HotelManagement.Models;
+using Microsoft.EntityFrameworkCore;
+using HotelManagement.Repositories;
 
 namespace HotelManagement
 {
     public class Startup
     {
+        private IConfiguration _configuration;
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            // Cau hinh cho doi tuong tra ve khong moc' noi' du lieu voi nhau qua dai
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            var connectionString = _configuration["ConnectionStrings:DefaultConnection"].ToString();
+            services.AddDbContext<DatabaseContext>(option => option.UseLazyLoadingProxies().UseSqlServer(connectionString));
+
+            // inject repo
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+        }
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
