@@ -42,6 +42,16 @@
             console.log("create_room_type_success");
             createRoomTypeSuccessToast();
         }
+
+        if ('@ViewBag.message' == "delete_room_type_success") {
+            console.log("delete_room_type_success");
+            deleteRoomTypeSuccessToast();
+        }
+
+        if ('@ViewBag.message' == "delete_room_type_fail") {
+            console.log("delete_room_type_success");
+            deleteRoomTypeSuccessToast();
+        }
     });
 </script>
 <div class="row-fluid">
@@ -68,7 +78,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var lp in ViewBag.loaiPhongs)
+                            @foreach(var lp in ViewBag.loaiPhongs)
                             {
                                 <tr>
                                     <td>@lp.KhongGian</td>
@@ -93,9 +103,9 @@
                                         @lp.MaGiaNavigation.NgayHieuLucBd.ToString("dd/MM/yyyy") - @lp.MaGiaNavigation.NgayHieuLucKt.ToString("dd/MM/yyyy")
                                     </td>
                                     <td class="loai_phong_action">
-                                        <a class="action_edit" id="@lp.Malp" data-bs-toggle="modal" data-bs-target="#update_room_type"><i class="fa fa-edit text-info"></i></a>
+                                        <a id="@lp.Malp" data-bs-toggle="modal" data-bs-target="#update_room_type"><i class="fa fa-edit text-info"></i></a>
                                         <br />
-                                        <a href="#"><i class="fa fa-remove text-danger"></i></a>
+                                        <a id="@lp.Malp" data-bs-toggle="modal" data-bs-target="#confirm_delete_room_type" ><i class="fa fa-remove text-danger"></i></a>
                                     </td>
                                 </tr>
                             }
@@ -497,5 +507,34 @@
             </div>
         </form>
 
+    </div>
+</div>
+@*
+    Modal for confirm roomType delete
+*@
+<div class="modal fade" id="confirm_delete_room_type" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Xác nhận xoá loại phòng</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="roomtype" asp-action="delete">
+                <div class="row-fluid">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                                <label class="col-md-12 col-form-label ml-2">Bạn có chắc chắn muốn xoá đi loại phòng: <span id="delete_room_type" style="color:red"></span> </label>
+                            <input type="hidden" name="ma_lp" id="delete_room_type_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xoá loại phòng</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>

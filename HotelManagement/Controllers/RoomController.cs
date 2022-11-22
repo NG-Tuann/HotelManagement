@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HotelManagement.Models;
 using HotelManagement.Repositories;
+using HotelManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -19,16 +20,19 @@ namespace HotelManagement.Controllers
         private IBaseRepository<Phong> _phongRepo;
         private IBaseRepository<Tang> _tangRepo;
         private IBaseRepository<LoaiPhong> _loaiPhongRepo;
+        private IRoomService _roomService;
         // GET: /<controller>/
 
-        public RoomController(IBaseRepository<Phong> phongRebo, IBaseRepository<Tang> tangRepo, IBaseRepository<LoaiPhong> loaiPhongRepo)
+        public RoomController(IBaseRepository<Phong> phongRebo, IBaseRepository<Tang> tangRepo, IBaseRepository<LoaiPhong> loaiPhongRepo, IRoomService roomService)
         {
             _phongRepo = phongRebo;
             _tangRepo = tangRepo;
             _loaiPhongRepo = loaiPhongRepo;
+            _roomService = roomService;
         }
 
         [Route("index")]
+        [Route("~/")]
         [Route("")]
         public IActionResult Index()
         {
@@ -37,7 +41,38 @@ namespace HotelManagement.Controllers
             ViewBag.tangs = _tangRepo.GetAll().ToList();
             // Truyen danh sach cac loai phong sang view
             ViewBag.loaiPhongs = _loaiPhongRepo.GetAll().ToList();
+            // Truyen danh sach phong trong
             return View();
+        }
+
+        [HttpGet]
+        [Route("filter_room_by_date")]
+        public IActionResult filterRoomByDate(String start_date, String end_date)
+        {
+            try
+            {
+                DateTime sDate = DateTime.ParseExact(start_date, "dd/MM/yyyy",
+                                         System.Globalization.CultureInfo.InvariantCulture);
+
+                DateTime eDate = DateTime.ParseExact(end_date, "dd/MM/yyyy",
+                                          System.Globalization.CultureInfo.InvariantCulture);
+                List<Phong> pTrongs = _roomService.timPhongTrong(sDate, eDate);
+
+                // Truyen danh sach tang va phong sang view
+                ViewBag.tangs = _tangRepo.GetAll().ToList();
+
+                // Truyen danh sach cac loai phong sang view
+                ViewBag.loaiPhongs = _loaiPhongRepo.GetAll().ToList();
+
+                // Truyen danh sach phong trong sang view
+                ViewBag.phongsTrong = pTrongs;
+
+                return View("index");
+            } catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return View("index");
+            }
         }
 
         [HttpPost]
