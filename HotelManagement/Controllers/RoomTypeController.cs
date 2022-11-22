@@ -18,15 +18,16 @@ namespace HotelManagement.Controllers
     {
         private IBaseRepository<LoaiPhong> _loaiPhongRepo;
         private IBaseRepository<GiaPhong> _giaPhongRepo;
-        public RoomTypeController(IBaseRepository<LoaiPhong> loaiPhongRepo, IBaseRepository<GiaPhong> giaPhongRepo)
+        private IBaseRepository<Phong> _phongRepo;
+        public RoomTypeController(IBaseRepository<LoaiPhong> loaiPhongRepo, IBaseRepository<GiaPhong> giaPhongRepo, IBaseRepository<Phong> phongRepo)
         {
             _loaiPhongRepo = loaiPhongRepo;
             _giaPhongRepo = giaPhongRepo;
+            _phongRepo = phongRepo;
         }
         // GET: /<controller>/
         [Route("")]
         [Route("index")]
-        [Route("~/")]
         public IActionResult Index(string message)
         {
             if (!string.IsNullOrEmpty(message))
@@ -44,6 +45,32 @@ namespace HotelManagement.Controllers
         {
             var loai_phong = _loaiPhongRepo.GetAll().SingleOrDefault(i => i.Malp == ma_lp);
             return new JsonResult(loai_phong);
+        }
+
+        [HttpGet]
+        [Route("delete")]
+        public IActionResult Delete(String ma_lp)
+        {
+            var loai_phong = _loaiPhongRepo.GetAll().SingleOrDefault(i => i.Malp == ma_lp);
+            return new JsonResult(loai_phong);
+        }
+
+        [HttpPost]
+        [Route("delete")]
+        public IActionResult DeleteRoomType(String ma_lp)
+        {
+            var loai_phong = _loaiPhongRepo.GetAll().SingleOrDefault(i => i.Malp == ma_lp);
+            _loaiPhongRepo.Delete(loai_phong.Malp);
+
+            try
+            {
+                _loaiPhongRepo.Save();
+                return RedirectToAction("index", new { message = "delete_room_type_success" });
+            } catch(SqlException e)
+            {
+                Debug.WriteLine(e.Message);
+                return RedirectToAction("index", new { message = "delete_room_type_fail" });
+            }
         }
 
         [HttpPost]

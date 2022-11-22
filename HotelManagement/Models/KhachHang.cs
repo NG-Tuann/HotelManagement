@@ -21,6 +21,7 @@ namespace HotelManagement.Models
         public string QuocTich { get; set; }
         public string Email { get; set; }
         public string Sdt { get; set; }
+        public int GioiTinh { get; set; }
         public DateTime? NgaySinh { get; set; }
 
         public virtual ICollection<ChiTietKhachO> ChiTietKhachOs { get; set; }

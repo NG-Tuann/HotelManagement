@@ -540,6 +540,8 @@ namespace HotelManagement.Models
                 entity.Property(e => e.TenKh)
                     .HasMaxLength(100)
                     .HasColumnName("TEN_KH");
+
+                entity.Property(e => e.GioiTinh).HasColumnName("GIOI_TINH");
             });
 
             modelBuilder.Entity<LoaiPhong>(entity =>

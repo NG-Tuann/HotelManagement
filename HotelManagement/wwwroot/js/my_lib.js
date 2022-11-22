@@ -1,5 +1,6 @@
 ﻿$(document).ready(function () {
         // Room
+
         $('.datepicker').datepicker({
             setDate: new Date(),
             format: 'dd/mm/yyyy',
@@ -77,11 +78,12 @@
         $('.dropdown-menu .dropdown-item').click(function () {
             var roomId = $(this).attr('id');
             console.log(roomId);
-            $('#delete_room').html(roomId);
+            $('#delete_room').text(roomId);
             $('#delete_room_id').val(roomId);
         });
 
-        /* ajax support update room */
+/* ajax support update room */
+
         $('.dropdown-menu .dropdown-item').click(function () {
             var roomId = $(this).attr('id');
             console.log(roomId);
@@ -113,7 +115,8 @@
         });
 
         // RoomType
-        // support get floor id for delete room
+        // support get roomtype id for delete room
+
         $('.loai_phong_action a').click(function () {
             var maLp = $(this).attr('id');
             console.log("Ma loai phong: " + maLp);
@@ -149,4 +152,25 @@
                 }
             });
         });
+
+        // support get roomtype id for delete
+        
+        $('.loai_phong_action a').click(function () {
+            var maLp = $(this).attr('id');
+            console.log("Ma loai phong: " + maLp);
+            $.ajax({
+            type: 'GET',
+            data: {
+                ma_lp: maLp
+            },
+            url: '/roomtype/delete',
+                success: function (roomType) {
+                    console.log(roomType);
+                    $('#delete_room_type').text(roomType.loaiPhong1);
+                    $('#delete_room_type_id').val(roomType.malp);
+                }
+            });
+        });
+
+        // 
     });

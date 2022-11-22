@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using HotelManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using HotelManagement.Repositories;
+using HotelManagement.Services;
 
 namespace HotelManagement
 {
@@ -30,6 +31,9 @@ namespace HotelManagement
 
             // inject repo
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+
+            // dependency inject
+            services.AddScoped<IRoomService, RoomService>();
         }
 
         public Startup(IConfiguration configuration)

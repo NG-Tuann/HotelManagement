@@ -8,7 +8,33 @@
       showHideTransition: 'slide',
       icon: 'success',
       loaderBg: '#28a745',
-      position: 'top-right'
+      position: 'bottom-left'
+    })
+  };
+
+  deleteRoomTypeSuccessToast = function() {
+    'use strict';
+    resetToastPosition();
+    $.toast({
+        heading: 'Xoá phòng thành công',
+        text: 'Hãy kiểm tra lại danh sách loại phòng và các phòng trực thuộc loại phòng vừa xoá.',
+      showHideTransition: 'slide',
+      icon: 'warning',
+      loaderBg: '#ffc107',
+      position: 'bottom-left'
+    })
+  };
+
+    deleteRoomTypeFailToast = function() {
+    'use strict';
+    resetToastPosition();
+    $.toast({
+      heading: 'Xoá loại phòng thất bại',
+      text: 'Cập nhật loại phòng cho các phòng liên quan trước khi xoá loại phòng này.',
+      showHideTransition: 'slide',
+      icon: 'error',
+      loaderBg: '#dc3545',
+      position: 'bottom-left'
     })
   };
 
@@ -21,7 +47,7 @@
       showHideTransition: 'slide',
       icon: 'success',
       loaderBg: '#28a745',
-      position: 'top-right'
+      position: 'bottom-left'
     })
   };
   showInfoToast = function() {
