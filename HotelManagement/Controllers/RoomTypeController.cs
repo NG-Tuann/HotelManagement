@@ -92,14 +92,14 @@ namespace HotelManagement.Controllers
             String eDate = ngay_hieu_luc_kt;
             if (sDate.Length > 10)
             {
-                sDate = formatDate(ngay_hieu_luc_bd);
+                sDate = FormatDateTime.formatDate(ngay_hieu_luc_bd);
                 Debug.WriteLine(sDate);
                 Debug.WriteLine(eDate);
             }
 
             if(eDate.Length > 10)
             {
-                eDate = formatDate(ngay_hieu_luc_kt);
+                eDate = FormatDateTime.formatDate(ngay_hieu_luc_kt);
                 Debug.WriteLine(eDate);
             }
 
@@ -214,14 +214,14 @@ namespace HotelManagement.Controllers
 
         }
 
-        public String formatDate(String date)
-        {
-            String cutDate = date.Substring(0, 10);
-            string newDate = cutDate.Replace('-', '/');
-            string[] result = newDate.Split('/');
+        //public String formatDate(String date)
+        //{
+        //    String cutDate = date.Substring(0, 10);
+        //    string newDate = cutDate.Replace('-', '/');
+        //    string[] result = newDate.Split('/');
 
-            String dateFormatted = result[2] + "/" + result[1] + "/" + result[0];
-            return dateFormatted;
-        }
+        //    String dateFormatted = result[2] + "/" + result[1] + "/" + result[0];
+        //    return dateFormatted;
+        //}
     }
 }

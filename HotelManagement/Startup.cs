@@ -34,6 +34,7 @@ namespace HotelManagement
 
             // dependency inject
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<ICustomerService, CustomerService>();
         }
 
         public Startup(IConfiguration configuration)

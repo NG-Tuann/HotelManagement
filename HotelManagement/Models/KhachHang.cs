@@ -15,9 +15,7 @@ namespace HotelManagement.Models
 
         public string Makh { get; set; }
         public string Cmnd { get; set; }
-        public DateTime? NgayCap { get; set; }
         public string TenKh { get; set; }
-        public string NoiCap { get; set; }
         public string QuocTich { get; set; }
         public string Email { get; set; }
         public string Sdt { get; set; }
