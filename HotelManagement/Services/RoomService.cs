@@ -35,5 +35,48 @@ namespace HotelManagement.Services
             return _db.Phongs.FromSqlRaw("[dbo].[sp_FilterByDate] @start_date, @end_date", param).ToList();
             
         }
+
+        public decimal? tinhGiaPhongTheoNgayTuanThang(string ngay_bd, string ngay_kt, int[] phong_so)
+        {
+
+            DateTime sDate = DateTime.ParseExact(ngay_bd, "dd/MM/yyyy",
+                                         System.Globalization.CultureInfo.InvariantCulture);
+
+            DateTime eDate = DateTime.ParseExact(ngay_kt, "dd/MM/yyyy",
+                                         System.Globalization.CultureInfo.InvariantCulture);
+
+            TimeSpan stay = eDate - sDate;
+
+            int stayDay = stay.Days;
+
+            Debug.WriteLine("So ngay o: " + stayDay);
+
+            decimal? giaPhong = 0;
+
+            for (int i = 0; i < phong_so.Length; i++)
+            {
+                int phongSo = phong_so[i];
+                var phong = _db.Phongs.ToList().SingleOrDefault(i => i.PhongSo == phongSo);
+
+                // Tinh gia phong theo ngay tuan thang
+
+                if (stayDay < 7)
+                {
+                    giaPhong += phong.MaLpNavigation.MaGiaNavigation.GiaTheoNgay * stayDay;
+                    Debug.WriteLine("O theo ngay");
+                }
+                else if (stayDay < 30)
+                {
+                    giaPhong += phong.MaLpNavigation.MaGiaNavigation.GiaTheoTuan * stayDay;
+                    Debug.WriteLine("O theo tuan");
+                }
+                else
+                {
+                    giaPhong += phong.MaLpNavigation.MaGiaNavigation.GiaTheoThang * stayDay;
+                    Debug.WriteLine("O theo thang");
+                }
+            }
+            return giaPhong;
+        }
     }
 }
