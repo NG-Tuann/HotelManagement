@@ -33,22 +33,34 @@
             console.log("Hello");
         });
 
-        $('.dropdown .room').click(function () {
-            var roomCheckIn = $(this).attr('id');
-            console.log(roomCheckIn);
-            $('#roomCheck').val(roomCheckIn);
-        });
+        //$('.dropdown .room').click(function () {
+        //    var roomCheckIn = $(this).attr('id');
+        //    console.log(roomCheckIn);
+        //    $('#roomCheck').val(roomCheckIn);
+        //});
 
-        $('#create_check_in_btn').click(function () {
-            var roomCheck = $('#roomCheck').val();
-            console.log(roomCheck);
-            $('#' + roomCheck).removeClass("custom_room_available");
-            console.log("click");
-            $('#' + roomCheck).addClass("custom_room_check_in");
-            $('#checkin_' + roomCheck).addClass("disabled");
-            $('#' + roomCheck + "_checkIn").html('<div class="stayInfo"></div>');
-            console.log("#" + roomCheck + "_checkIn");
-            $('.stayInfo').text('16h - 20h');
+        // Them trang thai cho phong
+
+        $('.dropdown .room').each(function () {
+            console.log("duyet phong");
+            var phongSo = $(this).attr('id');
+            if ($(this).attr('data-value') == 'Khách đang ở') {
+                $(this).addClass('staying_room');
+
+                //$.ajax({
+                //    type: 'GET',
+                //    url: '/chi_tiet_dat_phong/tim_tat_ca_chitietdondat',
+                //    success: function (result) {
+                //        console.log(result);
+                //        for (let i = 0; i < result.length; i++) {
+                //            if (phongSo == result[i].phonG_SO && result[i].tranG_THAI == 'Đã nhận phòng') {
+                //                console.log("hop le");
+                //                $('.dropdown .room').filter($(this).attr('id') == phongSo).append(`<div class="stayInfo">${result[i].checK_IN.substring(0, 10)} - ${result[i].checK_OUT.substring(0, 10)} </div>`);
+                //            }
+                //        }
+                //    }
+                //});
+            }
         });
 
         // support create room at chosen floor
@@ -144,21 +156,15 @@
 
         // support get roomtype id for delete
         
-        $('.loai_phong_action a').click(function () {
-            var maLp = $(this).attr('id');
+        $('a[data-id=xoa_loai_phong]').click(function () {
+            var loaiPhong = $(this).attr('id');
+            console.log("Loai phong: " + loaiPhong);
+
+            var maLp = $(this).attr('data-value');
             console.log("Ma loai phong: " + maLp);
-            $.ajax({
-            type: 'GET',
-            data: {
-                ma_lp: maLp
-            },
-            url: '/roomtype/delete',
-                success: function (roomType) {
-                    console.log(roomType);
-                    $('#delete_room_type').text(roomType.loaiPhong1);
-                    $('#delete_room_type_id').val(roomType.malp);
-                }
-            });
+
+            $('#delete_room_type').text(loaiPhong);
+            $('#delete_room_type_id').val(maLp);
         });
 
         // them khach o vao table ben duoi don dat phong
@@ -235,33 +241,35 @@
         $('#so_can_cuoc').keyup(function () {
             var soCanCuoc = $('#so_can_cuoc').val();
             console.log(soCanCuoc);
-            $.ajax({
-                type: 'GET',
-                data: {
-                    cmnd: soCanCuoc
-                },
-                url: '/customer/is_customer_before',
-                success: function (kh) {
-                    console.log(kh);
+            if (soCanCuoc.length == 12) {
+                $.ajax({
+                    type: 'GET',
+                    data: {
+                        cmnd: soCanCuoc
+                    },
+                    url: '/customer/is_customer_before',
+                    success: function (kh) {
+                        console.log(kh);
 
-                    if (kh != null) {
-                        $('#so_can_cuoc').val(kh.cmnd);
-                        $('#ho_ten').val(kh.tenKh);
-                        $('#email_khach').val(kh.email);
-                        $('#ngay_sinh').val(kh.ngaySinh);
-                        $('#sdt').val(kh.sdt);
-                        if (kh.gioi_tinh == 1) {
-                            console.log('gioi tinh cua khach hang: '+kh.gioi_tinh);
-                            $('#gioiTinhNam').prop('checked', true);
-                        }
-                        else {
-                            $('#gioiTinhNu').prop('checked', true);
+                        if (kh != null) {
+                            $('#so_can_cuoc').val(kh.cmnd);
+                            $('#ho_ten').val(kh.teN_KH);
+                            $('#email_khach').val(kh.email);
+                            $('#ngay_sinh').val(kh.dob);
+                            $('#sdt').val(kh.sdt);
+                            if (kh.gender == 1) {
+                                console.log('gioi tinh cua khach hang: ' + kh.gender);
+                                $("input[name=gioi_tinh][value=nam]").prop('checked', true);
+                            }
+                            else {
+                                $("input[name=gioi_tinh][value=nu]").prop('checked', true);
 
+                            }
+                            $('#quoc_gia').val(kh.quoC_TICH);
                         }
-                        $('#quoc_gia').val(kh.quocTich);
                     }
-                }
-            });
+                });
+            }
         });
 
         // catch ctrl + click on room
@@ -269,12 +277,16 @@
         $('.dropdown .room').click(function (e) {
             if (e.metaKey) {
                 console.log("Command+Click");
-                if ($(this).css('opacity') == 0.8) {
-                    $(this).css('opacity', 1);
+                if ($(this).hasClass('chosen_room')) {
+                    $(this).removeClass('chosen_room');
                 }
                 else {
-                    $(this).css('opacity', 0.8);
+                    $(this).addClass('chosen_room');
                 }
+            }
+            else {
+                $('.dropdown .room').removeClass('chosen_room');
+                $(this).addClass('chosen_room');
             }
         });
 
@@ -305,7 +317,7 @@
 
                 $('.dropdown .room').each(function () {
                     console.log("abc");
-                    if ($(this).css('opacity') == 0.8) {
+                    if ($(this).hasClass('chosen_room')) {
                         if ($(this).attr('id') != phongDuocChon) {
                             phongs.push($(this).attr('id'));
                         }
@@ -327,6 +339,9 @@
                 $('#phong_so').val(result);
                 sDate = $('#ngay_vao').val();
                 eDate = $('#ngay_roi').val();
+
+                // Tinh tong tien
+
                 $.ajax({
                     type: 'POST',
                     data: {
@@ -342,5 +357,585 @@
                 });
             }
         });
-        
+
+        // Ajax hien thi danh sach cac don dat phong trong bang check in
+
+        $("a[data-id=ds_don_dat]").click(function () {
+            console.log("danh sach don dat");
+            var roomId = $(this).attr('id');
+            $.ajax({
+                type: 'GET',
+                data: {
+                    ma_phong: roomId
+                },
+                url: '/chi_tiet_dat_phong/tim_theo_maphong',
+                success: function (result) {
+                    console.log(result);
+                    var data = '';
+                    for (let i = 0; i < result.length; i++) {
+                        if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                        } else {
+                            data +=
+                                `<tr id="${result[i].cT_DON_DAT}" data-value="${result[i].mA_DON_DAT}">
+                                    <td><a id="${result[i].cT_DON_DAT}" href="#"><i class="ti-share"></i></a></td>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td>${result[i].checK_IN}</td>
+                                    <td>${result[i].checK_OUT}</td>
+                                    <td>${result[i].phonG_SO}</td>
+                                    <td>${result[i].loaI_PHONG}</td>
+                                    <td>${result[i].tranG_THAI}</td>
+                                </tr>`;
+                        }
+                    }
+                    $('#cac_don_dat_phong tbody').html(data);
+                }
+            });
+        });
+
+    // Tim tat ca cac chi tiet don dat theo ma don dat
+
+        $('#tim_theo_madondat').keyup(function () {
+            var maDonDat = $(this).val();
+            console.log(maDonDat);
+            if (maDonDat.length == 5) {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        ma_don_dat: maDonDat
+                    },
+                    url: '/chi_tiet_dat_phong/tim_theo_madondat',
+                    success: function (result) {
+                        console.log(result);
+                        var data = '';
+                        for (let i = 0; i < result.length; i++) {
+                            if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                            } else {
+                                data +=
+                                    `<tr id="${result[i].cT_DON_DAT}" data-value="${result[i].mA_DON_DAT}">
+                                    <td><a id="${result[i].cT_DON_DAT}" href="#"><i class="ti-share"></i></a></td>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td>${result[i].checK_IN}</td>
+                                    <td>${result[i].checK_OUT}</td>
+                                    <td>${result[i].phonG_SO}</td>
+                                    <td>${result[i].loaI_PHONG}</td>
+                                    <td>${result[i].tranG_THAI}</td>
+                                </tr>`;
+                            }
+                        }
+                        $('#cac_don_dat_phong tbody').html(data);
+                    }
+                });
+            }
+        });
+
+    // tim tat cac cac chi tiet don dat theo ngay check in
+
+        $(".datepicker").datepicker({
+            onSelect: function (dateText) {
+                display("Selected date: " + dateText + ", Current Selected Value= " + this.value);
+                $(this).change();
+            }
+        }).on("change", function () {
+            var date = $('#tim_theo_checkin').val();
+            $.ajax({
+                type: 'GET',
+                data: {
+                    check_in: date
+                },
+                url: '/chi_tiet_dat_phong/tim_theo_checkin',
+                success: function (result) {
+                    console.log(result);
+                    if (result != null) {
+                        var data = '';
+                        for (let i = 0; i < result.length; i++) {
+                            if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                            } else {
+                                data +=
+                                    `<tr id="${result[i].cT_DON_DAT}" data-value="${result[i].mA_DON_DAT}">
+                                    <td><a id="${result[i].cT_DON_DAT}" href="#"><i class="ti-share"></i></a></td>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td>${result[i].checK_IN}</td>
+                                    <td>${result[i].checK_OUT}</td>
+                                    <td>${result[i].phonG_SO}</td>
+                                    <td>${result[i].loaI_PHONG}</td>
+                                    <td>${result[i].tranG_THAI}</td>
+                                </tr>`;
+                            }
+                        }
+                        $('#cac_don_dat_phong tbody').html(data);
+                    }
+                }
+            });
+        });
+
+    // Tim tat ca cac don dat phong chi tiet
+
+        $('#tim_tat_ca_ctdp').click(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/chi_tiet_dat_phong/tim_tat_ca_chitietdondat',
+                success: function (result) {
+                    console.log(result);
+                    var data = '';
+                    for (let i = 0; i < result.length; i++) {
+                        if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                        } else {
+                            data +=
+                                `<tr id="${result[i].cT_DON_DAT}" data-value="${result[i].mA_DON_DAT}">
+                                    <td><a id="${result[i].cT_DON_DAT}" href="#"><i class="ti-share"></i></a></td>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td>${result[i].checK_IN}</td>
+                                    <td>${result[i].checK_OUT}</td>
+                                    <td>${result[i].phonG_SO}</td>
+                                    <td>${result[i].loaI_PHONG}</td>
+                                    <td>${result[i].tranG_THAI}</td>
+                                </tr>`;
+                        }
+                    }
+                    $('#cac_don_dat_phong tbody').html(data);
+                }
+            });
+        });
+
+        // Click chon chi tiet don dat va check in
+
+        $('#cac_don_dat_phong').on('click', 'tbody tr', function (e) {
+            if (e.metaKey) {
+                if ($(this).hasClass('chosen')) {
+                    $(this).removeClass('chosen');
+                }
+                else {
+                    // Kiem tra trung don dat
+
+                    $(this).addClass('chosen');
+                    const ma_don_dat_ids = [];
+
+                    $('tbody .chosen').each(function () {
+                        ma_don_dat_ids.push($(this).attr('data-value'));
+                    });
+
+                    if (ma_don_dat_ids.length > 0) {
+                        let flag = 0;
+                        for (let i = 0; i < ma_don_dat_ids.length; i++) {
+                            for (let j = 0; j < ma_don_dat_ids.length; j++) {
+                                if (!(ma_don_dat_ids[i] === ma_don_dat_ids[j])) {
+                                    flag++;
+                                }
+                            }
+                        }
+                        if (flag > 0) {
+                            alert("Không cùng đơn đặt phòng. Bạn chỉ có thể check in cho các phòng có cùng đơn đặt");
+                            $(this).removeClass('chosen');
+                        }
+                    }
+                }
+            }
+            else {
+                $(this).addClass('chosen').siblings().removeClass('chosen');
+            }
+        });
+
+        function isKhachHang(soCanCuoc) {
+            $.ajax({
+                type: 'GET',
+                data: {
+                    cmnd: soCanCuoc
+                },
+                url: '/customer/is_customer_before',
+                success: function (kh) {
+                    console.log(kh);
+
+                    if (kh != null) {
+                        $('#ho_ten_check_in').val(kh.teN_KH);
+                        $('#email_khach_check_in').val(kh.email);
+                        $('#ngay_sinh_check_in').val(kh.dob);
+                        $('#sdt_check_in').val(kh.sdt);
+                        if (kh.gender == 1) {
+                            console.log('gioi tinh cua khach hang: ' + kh.gender);
+                            $("input[name=gioi_tinh][value=nam]").prop('checked', true);
+                        }
+                        else {
+                            $("input[name=gioi_tinh][value=nu]").prop('checked', true);
+
+                        }
+                        $('#quoc_gia_check_in').val(kh.quoC_TICH);
+                    }
+                }
+            });
+        }
+
+    // Tim tat ca cac don dat phong
+
+        $('#show_ds_dat_phong').click(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/booking/findall',
+                success: function (result) {
+                    console.log(result);
+                    if (result != null) {
+                        var data = '';
+                        for (let i = 0; i < result.length; i++) {
+                            if (result[i].tranG_THAI === 'Đợi chuyển cọc') {
+                                data +=
+                                    `<tr>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td class="text-danger">${result[i].tranG_THAI}   <i id="cap_nhat_tien_coc" data-value="${result[i].mA_DON_DAT}" class="fa fa-credit-card text-info"></i></td>
+                                    <td>${result[i].tonG_TIEN}</td >
+                                    <td>
+                                        <a class="text-info" id="${result[i].mA_DON_DAT}" ><i class="ti-check-box"></i> Xem chi tiết</a>
+                                    </td>
+                                </tr>`;
+                            }
+                            else if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                            }
+                            else {
+                                data +=
+                                    `<tr>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td class="text-success">${result[i].tranG_THAI}</td>
+                                    <td>${result[i].tonG_TIEN}</td >
+                                    <td>
+                                        <a class="text-info" id="${result[i].mA_DON_DAT}" ><i class="ti-check-box"></i> Xem chi tiết</a>
+                                    </td>
+                                </tr>`;
+                            }
+                        }
+                        $('#danh_sach_don_dat tbody').html(data);
+                    }
+                }
+           });
+        });
+
+    $('#danh_sach_don_dat').on('click', 'tbody tr td #cap_nhat_tien_coc', function (e) {
+        if (confirm("Đã nhận 50% tiền cọc !")) {
+            var maDonDat = $(this).attr('data-value');
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_don_dat: maDonDat
+                },
+                url: '/booking/capNhatTienCoc',
+                success: function (result) {
+                    if (result == 'success') {
+                        updateDepositSuccessToast();
+                    }
+                    else {
+                        updateDepositFailToast();
+                        return;
+                    }
+                }
+            });
+            $(this).closest('td').removeClass('text-danger').addClass('text-success').html('Đã chuyển cọc');
+        } else {
+
+        }
     });
+
+    $('#danh_sach_don_dat').on('click', 'tbody tr td a', function (e) {
+        var maDonDat = $(this).attr('id');
+        console.log(maDonDat);
+        if (maDonDat.length == 5) {
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_don_dat: maDonDat
+                },
+                url: '/chi_tiet_dat_phong/tim_theo_madondat',
+                success: function (result) {
+                    console.log(result);
+                    var data = '';
+                    for (let i = 0; i < result.length; i++) {
+                        if (result[i].tranG_THAI === 'Đã huỷ') {
+
+                        } else {
+                            data +=
+                                `<tr id="${result[i].cT_DON_DAT}" data-value="${result[i].mA_DON_DAT}">
+                                    <td><a id="${result[i].cT_DON_DAT}" href="#"><i class="ti-share"></i></a></td>
+                                    <td>${result[i].mA_DON_DAT}</td>
+                                    <td>${result[i].teN_KH}</td>
+                                    <td>${result[i].checK_IN}</td>
+                                    <td>${result[i].checK_OUT}</td>
+                                    <td>${result[i].phonG_SO}</td>
+                                    <td>${result[i].loaI_PHONG}</td>
+                                    <td>${result[i].tranG_THAI}</td>
+                                </tr>`;
+                        }
+                    }
+                    $('#cac_don_dat_phong tbody').html(data);
+                }
+            });
+        }
+    });
+
+    // Kiem tra xem 2 don dat phong duoc chon co cung ma don dat hay ko
+
+    $('#nhan_phong_tu_danh_sach_dat').click(function () {
+        console.log('Nhan phong button is clicked');
+        // Format date ngay nhan phong = ngay he thong
+
+        const chi_tiet_don_dat_ids = [];
+
+        // Nhan ve danh sach phong
+
+        let phongs = [];
+
+        // Lay ve ngay cua he thong
+
+        var today = new Date();
+
+        var day = String(today.getDate()).padStart(2, '0');
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var year = String(today.getFullYear());
+
+        var sDate = day + '/' + month + '/' + year;
+        var eDate;
+
+        $('#cac_don_dat_phong tbody .chosen').each(function () {
+            chi_tiet_don_dat_ids.push($(this).attr('id'));
+        });
+
+        console.log(chi_tiet_don_dat_ids);
+
+        // Neu nhan 1 phong
+        // Nhan Phong Khach Le dat truoc
+
+        if (chi_tiet_don_dat_ids.length == 1) {
+            phongs = [];
+            // Hien thi thong tin check in 1 phong
+            $('#create_check_in').modal('show');
+            var ma_ctdd = chi_tiet_don_dat_ids[0];
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_ct_dondat: ma_ctdd
+                },
+                url: '/chi_tiet_dat_phong/tim_theo_ma_ct_dondat',
+                success: function (result) {
+                    phongs.push(result.phonG_SO);
+
+                    eDate = result.checK_OUT;
+                    // format end date to dd/MM/yyyy
+
+                    var s = eDate.substring(0, 10).split('-');
+                    eDate = s[2] + '/' + s[1] + '/' + s[0];
+
+                    $('#ngay_roi_checkin').val(eDate);
+                    $('#ngay_vao_checkin').val(sDate);
+                    $('#roi_luc_checkin').val(result.giO_RA);
+                    $('#phong_so_checkin').val(result.phonG_SO);
+                    $('#ghi_chu_checkin').val(result.ghI_CHU);
+                    $('#loai_phong_dang_ky').val(result.loaI_PHONG);
+                    $('#so_can_cuoc_check_in').val(result.sO_CAN_CUOC);
+
+                    // Truyen ma chi tiet don dat phuc vu cho viec nhan 1 phong
+
+                    $('#ma_ctdp_checkin').val(ma_ctdd);
+
+                    // Hien thi thong tin khach hang dat truoc thong qua cmnd cua khach
+                    
+                    if ($('#so_can_cuoc_check_in').val() != null) {
+                        isKhachHang(result.sO_CAN_CUOC);
+                    }
+
+                    // Tinh tong tien cho phong thuc hien check in
+
+                    $.ajax({
+                        type: 'POST',
+                        data: {
+                            ngay_bd: sDate,
+                            ngay_kt: eDate,
+                            phong_so: phongs
+                        },
+                        url: '/room/tinh_gia_phong',
+                        success: function (data) {
+                            $('#tong_tien_checkin').val(data);
+                            $('#tien_coc_checkin').val(data * 1/2);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Neu nhan 1 phong tro len
+        // Nhan Phong Khach Doan dat truoc
+
+        else if (chi_tiet_don_dat_ids.length > 1) {
+            phongs = [];
+            $('#create_check_in').modal('show');
+            // Truyen ma chi tiet don dat phuc vu cho viec nhan nhieu hon 1 phong
+
+            var maChiTietDatPhong = '';
+
+            for (let i = 0; i < chi_tiet_don_dat_ids.length; i++) {
+                if (i == chi_tiet_don_dat_ids.length - 1) {
+                    maChiTietDatPhong += chi_tiet_don_dat_ids[i];
+                }
+                else {
+                    maChiTietDatPhong += chi_tiet_don_dat_ids[i] + ' - ';
+                }
+            }
+
+            $('#ma_ctdp_checkin').val(maChiTietDatPhong);
+
+
+            // Lap qua cac ct don dat hien thi thong tin dat phong cua khach doan
+
+            for (let i = 0; i < chi_tiet_don_dat_ids.length; i++) {
+                var ma_ctdd = chi_tiet_don_dat_ids[i];
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        ma_ct_dondat: ma_ctdd
+                    },
+                    url: '/chi_tiet_dat_phong/tim_theo_ma_ct_dondat',
+                    success: function (result) {
+                        phongs.push(result.phonG_SO);
+
+                        eDate = result.checK_OUT;
+                        // format end date to dd/MM/yyyy
+
+                        var s = eDate.substring(0, 10).split('-');
+                        eDate = s[2] + '/' + s[1] + '/' + s[0];
+
+
+                        $('#ngay_roi_checkin').val(eDate);
+                        $('#ngay_vao_checkin').val(sDate);
+                        $('#roi_luc_checkin').val(result.giO_RA);
+
+                        //$('#phong_so_checkin').val(listPhongs);
+
+                        $('#ghi_chu_checkin').val(result.ghI_CHU);
+
+                        $('#so_can_cuoc_check_in').val(result.sO_CAN_CUOC);
+
+                        // Hien thi thong tin khach hang dat truoc thong qua cmnd cua khach
+
+                        if ($('#so_can_cuoc_check_in').val() != null) {
+                            isKhachHang(result.sO_CAN_CUOC);
+                        }
+
+                        // Tinh tong tien cho phong thuc hien check in
+
+
+                        if (i == chi_tiet_don_dat_ids.length - 1) {
+                            $.ajax({
+                                type: 'POST',
+                                data: {
+                                    ngay_bd: sDate,
+                                    ngay_kt: eDate,
+                                    phong_so: phongs
+                                },
+                                url: '/room/tinh_gia_phong',
+                                success: function (data) {
+                                    $('#tong_tien_checkin').val(data);
+                                    $('#tien_coc_checkin').val(data * 1 / 2);
+                                    assignRoomCheckIn(phongs);
+                                }
+                            });
+                        }
+
+                    }
+                });
+            }
+        }
+        else {
+            alert('Chọn vào đơn đặt cần thực hiện nhận phòng hoặc nhận phòng trực tiếp từ phòng !');
+        }
+
+    });
+
+    // Nhan Phong Khach Doan dat truoc
+
+    // Gan cac phong kh thuc hien nhan phong cho khach doan
+
+    function assignRoomCheckIn(phongs) {
+        var phongsCheckIn = '';
+        for (let i = 0; i < phongs.length; i++) {
+            if (i == phongs.length - 1) {
+                phongsCheckIn += phongs[i];
+            }
+            else {
+                phongsCheckIn += phongs[i] + ' - ';
+            }
+        }
+        $('#phong_so_checkin').val(phongsCheckIn);
+    }
+
+    $('#check_in_for_customer').click(function () {
+        var phongCheckIn = $('#phong_so_checkin').val();
+        var ma_ctdd = $('#ma_ctdp_checkin').val();
+
+        // Neu check in 1 phong
+
+        if (phongCheckIn.length == 3) {
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_ct_dondat: ma_ctdd
+                },
+                url: '/chi_tiet_dat_phong/nhan_phong_theo_ma_ct_dondat',
+                success: function (data) {
+                    console.log(data);
+
+                    // Cap nhat lai trang thai cho ctdp tren man hinh
+
+                    $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
+                        if ($(this).attr('id') == ma_ctdd) {
+                            $(this).find("td:last").html('<i><b>Đã nhận phòng</b></i>  <i class="fa fa-check text-success"></i>');
+                            $(this).removeClass('chosen');
+                            checkInSuccessToast();
+                            return;
+                        }
+                    });
+                }
+            });
+            
+        }
+
+        // Neu check in nhieu hon 1 phong
+
+        if (phongCheckIn.length > 3) {
+            // split cac phong ra theo " - "
+
+            const ps = $('#phong_so_checkin').val().split(' - ');
+            const ctdps = ma_ctdd.split(' - ');
+
+            for (let i = 0; i < ctdps.length; i++) {
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        ma_ct_dondat: ctdps[i]
+                    },
+                    url: '/chi_tiet_dat_phong/nhan_phong_theo_ma_ct_dondat',
+                    success: function (data) {
+                        console.log(data);
+
+                        // Cap nhat lai trang thai cho ctdp tren man hinh
+
+                        $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
+                            if ($(this).attr('id') == ctdps[i]) {
+                                $(this).find("td:last").html('<i><b>Đã nhận phòng</b></i>  <i class="fa fa-check text-success"></i>');
+                                $(this).removeClass('chosen');
+                                return;
+                            }
+                        });
+                    }
+                });
+            }
+            checkInSuccessToast();
+        }
+    });
+
+});

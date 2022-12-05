@@ -8709,14 +8709,15 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #1F1F1F;
-  text-align: left;
-  background-color: #fff;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #1F1F1F;
+    text-align: left;
+    /*  background-color: #fff;*/
+    background-image: url('~/images/Beach-Resort-Wallpaper-22-1920x1080.jpg');
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -28449,11 +28450,10 @@ div.tagsinput span.tag a {
 }
 
 .content-wrapper {
-  background: #F5F7FF;
-  padding: 2.375rem 2.375rem;
-  width: 100%;
-  -webkit-flex-grow: 1;
-  flex-grow: 1;
+    background: #F5F7FF;
+    width: 100%;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
 }
 
 @media (max-width: 767px) {

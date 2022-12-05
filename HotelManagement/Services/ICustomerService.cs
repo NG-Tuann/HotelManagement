@@ -1,10 +1,11 @@
 ﻿using System;
 using HotelManagement.Models;
+using HotelManagement.ViewModels;
 
 namespace HotelManagement.Services
 {
     public interface ICustomerService
     {
-        public KhachHang kiemTraKhachCu(string cmnd);
+        public KhachHangCuView kiemTraKhachCu(string cmnd);
     }
 }

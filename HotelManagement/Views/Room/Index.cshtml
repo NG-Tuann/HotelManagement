@@ -9,7 +9,7 @@
 @*
     Jquery and BS js
 *@
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="~/js/jquery-1.12.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
 @*
     Date picker
@@ -40,24 +40,24 @@
 <link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css">
 <div class="row-fluid">
     <div class="col-xl-12 col-md-12">
-        <div class="row d-flex flex-wrap overflow-auto">
+        <div class="row d-flex mt-4 flex-wrap overflow-auto">
             <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-dark btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking"><i class="fa fa-calendar"></i> Chọn ngày đặt</button>
+                <button class="btn btn-primary btn-block" data-bs-toggle="modal" data-bs-target="#filter_date_booking"><i class="fa fa-calendar"></i>  Chọn ngày đặt</button>
             </div>
             <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-dark btn-block">Booking list</button>
+                <button class="btn btn-primary btn-block" id="show_ds_dat_phong" data-bs-toggle="modal" data-bs-target="#list_don_dat_phong" ><i class="fa fa-list"></i>  Chờ nhận phòng</button>
             </div>
             <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-dark btn-block">Checkin list</button>
+                <button class="btn btn-primary btn-block">Checkin list</button>
             </div>
             <div class="col-md-2 mb-3">
-                <button class="btn btn-outline-dark btn-block">Customer list</button>
+                <button class="btn btn-primary btn-block">Customer list</button>
             </div>
         </div>
         @*
             So do phong cua khach san
         *@
-        <div style="margin-top:20px;" class="row justify-content-start overflow-auto">
+        <div style="margin-top:20px;" class="row justify-content-start">
             <div class="col-xl-12 col-md-12 ">
                 @{
                     for (int i = 0; i < ViewBag.tangs.Count; i++)
@@ -78,20 +78,20 @@
                                 <div class="col-lg-2 col-md-2 col-sm-4 mb-3">
                                     <div class="dropdown">
                                         @* xoa 'room' trong id *@
-                                        <div class="room custom_room_available dropdown-toggle" id="@(p.PhongSo)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <div class="room custom_room_available dropdown-toggle" data-value="@p.TinhTrang" id="@(p.PhongSo)" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             @p.PhongSo
                                             <!-- Room type show -->
                                             <div class="roomType">@p.MaLpNavigation.KhongGian</div>
                                             <!-- If checked in then show stay time info -->
-                                            <span id="room@(p.PhongSo)_checkIn"></span>
+
                                         </div>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuSizeButton1" style="margin: 0px;">
                                             <h6 class="dropdown-header">Settings</h6>
 
                                             <a class="dropdown-item" id="@(p.PhongSo)" data-id="dat_phong" href="#">Tạo đặt phòng</a>
                                             @* Checkin theo danh sach dat phong truoc *@
-                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#list_booking_modal">List of booking</a>
-                                            <a class="dropdown-item" id="checkin_room@(p.PhongSo) cc" href="#" data-bs-toggle="modal" data-bs-target="#create_check_in">Check in</a>
+                                            <a class="dropdown-item" id="@(p.PhongSo)" data-id="ds_don_dat" href="#" data-bs-toggle="modal" data-bs-target="#list_don_dat_phong">Danh sách đơn đặt</a>
+                                            <a class="dropdown-item" id="checkin_room@(p.PhongSo) cc" href="#">Check in</a>
                                             <a class="dropdown-item" id="checkout_room@(p.PhongSo)" href="#">Check out</a>
                                             <a class="dropdown-item" id="@(p.PhongSo)" data-id="xoa_phong" href="#" data-bs-toggle="modal" data-bs-target="#confirm_delete_room">Xoá phòng</a>
                                             <a class="dropdown-item" id="@(p.PhongSo)" data-id="cap_nhat_phong" href="#" data-bs-toggle="modal" data-bs-target="#update_room">Xem / Cập nhật phòng</a>
@@ -149,71 +149,75 @@
     </div>
 </div>
 @*
-    Modal showing booking in order to check in
+    Hien thi danh sach cac don dat va thuc hien nhan phong
 *@
-<div class="modal fade" id="list_booking_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+<div class="modal fade" id="list_don_dat_phong" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
             <div class="modal-body">
                 <div class="row-fluid overflow-auto">
                     <div class="row">
                         <div class="col-md-12" style="margin-bottom:20px;">
-                            <h3>List of customer booking for this room:</h3>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Search: </label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Date check in: </label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control datepicker">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12" style="margin-bottom:20px;">
-                            <h3>List of booking:</h3>
+                            <h3>Danh sách đơn đặt phòng:</h3>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="table-responsive">
-                                <table class="table">
+                                <table class="table" id="danh_sach_don_dat">
                                     <thead>
                                         <tr>
-                                            <th>Number</th>
-                                            <th>Booking Code</th>
-                                            <th>Customer name</th>
+                                            <th>Mã đơn đặt</th>
+                                            <th>Khách đặt</th>
+                                            <th>Trạng thái</th>
+                                            <th>Tổng tiền</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-4" style="margin-bottom:20px;">
+                            <h3>Danh sách đơn đặt phòng chi tiết:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Tìm theo mã đơn đặt:</label>
+                                <div class="col-sm-3">
+                                    <input type="text" id="tim_theo_madondat" class="form-control">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Ngày check in:</label>
+                                <div class="col-sm-3">
+                                    <input type="text" id="tim_theo_checkin" placeholder="dd/MM/yyyy" class="form-control datepicker">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button id="tim_tat_ca_ctdp" class="btn btn-outline-info btn-block">Tìm tất cả <i class="fa fa-refresh"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table" id="cac_don_dat_phong">
+                                    <thead>
+                                        <tr>
+                                            <th>Chuyển phòng</th>
+                                            <th>Mã đơn đặt</th>
+                                            <th>Khách đặt</th>
                                             <th>Check in</th>
                                             <th>Check out</th>
-                                            <th>Room code</th>
-                                            <th>Room type</th>
+                                            <th>Phòng số</th>
+                                            <th>Loại phòng</th>
+                                            <th>Trạng thái</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>000012</td>
-                                            <td>Anh An</td>
-                                            <td>12/12/2022</td>
-                                            <td>15/12/2022</td>
-                                            <td>A102</td>
-                                            <td>Vip</td>
-                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
-                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
-                                            <td><button type="button" class="btn btn-primary" id="create_checkin" data-bs-dismiss="modal">Check in</button></td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -222,211 +226,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-info" id="refresh" data-bs-dismiss="modal">Refresh</button>
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-@*
-    Modal for create checkin
-*@
-<div class="modal fade" id="create_check_in" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="row-fluid overflow-auto">
-                    <div class="row">
-                        <div class="col-md-12" style="margin-bottom:20px;">
-                            <h3>Registration information:</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Price</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" placeholder=".00 $">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Date in</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control datepicker_from" placeholder="dd/MM/yyyy">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Arrive at</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="00:00">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Date out plan</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control datepicker_to" placeholder="dd/MM/yyyy">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Out at</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder="00:00">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Deposit</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder=".00 $">
-                                </div>
-                                <label class="col-sm-2 col-form-label">Discount</label>
-                                <div class="col-sm-4">
-                                    <input type="text" class="form-control" placeholder=".00 $">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Room code</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Description</label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="exampleTextarea1" rows="4"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12" style="margin-bottom:20px;">
-                            <h3>Customer information:</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Identity card</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Full name</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Address</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Description</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Date of birth</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control datepicker" placeholder="dd/MM/yyyy">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Phone number</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" placeholder="+84">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Gender</label>
-                                <div class="col-sm-5">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios1" value="" checked="">
-                                            Male
-                                            <i class="input-helper"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-5">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="membershipRadios" id="membershipRadios2" value="option2">
-                                            Female
-                                            <i class="input-helper"></i>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label">Nation</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-sm-2 col-form-label"></label>
-                                <div class="col-sm-10">
-                                    <div class="form-group row">
-                                        <div class="col-sm-5">
-                                            <button class="form-control btn btn-primary">Add</button>
-                                        </div>
-                                        <div class="col-sm-5">
-                                            <button class="form-control btn btn-light">Reset</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12" style="margin-bottom:20px;">
-                            <h3>List of customer:</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Number</th>
-                                            <th>Customer</th>
-                                            <th>Identity num</th>
-                                            <th>Address</th>
-                                            <th>Nation</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Nguyen Van A</td>
-                                            <td>012803812030</td>
-                                            <td>123 Abc Street</td>
-                                            <td>Viet Nam</td>
-                                            <td><button class="btn btn-outline-warning"><i class="fa fa-edit"></i></button></td>
-                                            <td><button class="btn btn-outline-danger"><i class="fa fa-remove"></i></button></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" id="roomCheck" />
-                <button type="button" class="btn btn-primary" id="create_check_in_btn" data-bs-dismiss="modal">Check in</button>
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="nhan_phong_tu_danh_sach_dat">Nhận phòng</button>
+                <button type="button" onclick="location.href='@Url.Action("index", "room")'" class="btn btn-light" data-bs-dismiss="modal">Hoàn thành nhận phòng</button>
             </div>
         </div>
     </div>
@@ -793,7 +594,7 @@
                                                     <div class="form-group row">
                                                         <label class="col-sm-2 col-form-label">Ngày sinh</label>
                                                         <div class="col-sm-10">
-                                                            <input type="text" id="ngay_sinh" class="form-control datepicker" placeholder="dd/MM/yyyy">
+                                                            <input type="text" id="ngay_sinh" class="form-control datepicker" placeholder="dd/MM/yyyy" style="padding-left:20px;">
                                                         </div>
                                                     </div>
 
@@ -806,8 +607,8 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group row">
-                                                        <label class="col-sm-2 col-form-label">Số điện thoại</label>
-                                                        <div class="col-sm-10">
+                                                        <label class="col-sm-3 col-form-label">Số điện thoại</label>
+                                                        <div class="col-sm-9">
                                                             <input type="text" id="sdt" class="form-control" placeholder="+84">
                                                         </div>
                                                     </div>
@@ -825,7 +626,7 @@
                                                         <div class="col-sm-5">
                                                             <div class="form-check">
                                                                 <label class="form-check-label">
-                                                                    <input type="radio" class="form-check-input" name="gioi_tinh" id="gioiTinhNu" value="nữ">
+                                                                    <input type="radio" class="form-check-input" name="gioi_tinh" id="gioiTinhNu" value="nu">
                                                                     Nữ
                                                                     <i class="input-helper"></i>
                                                                 </label>
@@ -900,5 +701,266 @@
 
             </div>
         </div>
+    </div>
+</div>
+
+@*
+    Modal hien thi nhan phong
+*@
+<div class="modal fade" id="create_check_in" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row-fluid overflow-auto">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Nhận phòng</h4>
+                                    <p class="card-description">Thông tin đăng ký bao gồm các thông tin về phòng, các loại dịch vụ và thông tin khách hàng chính thực hiện đăng ký</p>
+                                    <div class="mt-4">
+                                        <div class="accordion accordion-solid-header" id="accordion-4" role="tablist">
+                                            @* Cai dat thong tin loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-10">
+                                                    <h6 class="mb-0">
+                                                        <a data-bs-toggle="collapse" href="#collapse-10" aria-expanded="true" aria-controls="collapse-10" class="">
+                                                            Thông tin phòng đăng ký: <span id="loai_phong_dang_ky"></span>
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-10" class="collapse show" role="tabpanel" aria-labelledby="heading-10" data-parent="#accordion-4" style="">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Tổng tiền</label>
+                                                                            <div class="col-sm-10">
+                                                                                <input type="text" name="tong_tien_checkin" id="tong_tien_checkin" class="form-control" placeholder=".00 $">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Ngày vào</label>
+                                                                            <div class="col-sm-4">
+                                                                                <input type="text" name="ngay_vao_checkin" id="ngay_vao_checkin" class="form-control datepicker_from" placeholder="dd/MM/yyyy">
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Vào lúc</label>
+                                                                            <div class="col-sm-4">
+                                                                                <input type="text" name="vao_luc_checkin" id="vao_luc_checkin" class="form-control" placeholder="00:00">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Ngày rời</label>
+                                                                            <div class="col-sm-4">
+                                                                                <input type="text" name="ngay_roi_checkin" id="ngay_roi_checkin" readonly class="form-control datepicker_to" placeholder="dd/MM/yyyy">
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Rời lúc</label>
+                                                                            <div class="col-sm-4">
+                                                                                <input type="text" name="roi_luc_checkin" id="roi_luc_checkin" class="form-control" placeholder="00:00">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-6">
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Tiền cọc</label>
+                                                                            <div class="col-sm-10">
+                                                                                <input type="text" name="tien_coc_checkin" id="tien_coc_checkin" class="form-control" placeholder=".00 $">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Phòng số</label>
+                                                                            <div class="col-sm-10">
+                                                                                <input type="text" name="phong_so_checkin" id="phong_so_checkin" class="form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Ghi chú</label>
+                                                                            <div class="col-sm-10">
+                                                                                <textarea name="ghi_chu_checkin" id="ghi_chu_checkin" class="form-control" rows="4"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Cai dat gia cua loai phong *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-11">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapsed" data-bs-toggle="collapse" href="#collapse-11" aria-expanded="false" aria-controls="collapse-11">
+                                                            Thêm dịch vụ:
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-11" class="collapse" role="tabpanel" aria-labelledby="heading-11" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo giờ</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_gio" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo ngày</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_ngay" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tuần</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_tuan" class="form-control" placeholder=".00$">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Giá theo tháng</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="gia_theo_thang" class="form-control" placeholder=".00$">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực bắt đầu</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_bd" class="form-control datepicker_from" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+
+                                                                    <label class="col-sm-2 col-form-label">Ngày hiệu lực kết thúc</label>
+                                                                    <div class="col-sm-4">
+                                                                        <input type="text" name="ngay_hieu_luc_kt" class="form-control datepicker_to" id="start" value="dd-MM-yyyy">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                                        <a data-bs-toggle="collapse" href="#collapse-11" aria-expanded="true" aria-controls="collapse-11" class="" style="color: #333; text-decoration: none;"><i class="fa fa-angle-double-right"></i>  Kế tiếp</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @* Thong tin khach hang dat truoc *@
+                                            <div class="card">
+                                                <div class="card-header" role="tab" id="heading-12">
+                                                    <h6 class="mb-0">
+                                                        <a class="collapse" data-bs-toggle="collapse" href="#collapse-12" aria-expanded="true" aria-controls="collapse-12">
+                                                            Thông tin khách hàng đặt trước:
+                                                        </a>
+                                                    </h6>
+                                                </div>
+                                                <div id="collapse-12" class="collapse show" role="tabpanel" aria-labelledby="heading-12" data-parent="#accordion-4">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">
+                                                                        Số căn cước
+                                                                    </label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="so_can_cuoc_check_in" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Họ và tên</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="ho_ten_check_in" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Ngày sinh</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="ngay_sinh_check_in" class="form-control datepicker" placeholder="dd/MM/yyyy" style="padding-left:20px;">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Email</label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="email_khach_check_in" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-3 col-form-label">Số điện thoại</label>
+                                                                    <div class="col-sm-9">
+                                                                        <input type="text" id="sdt_check_in" class="form-control" placeholder="+84">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">Giới tính</label>
+                                                                    <div class="col-sm-5">
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="radio" class="form-check-input" name="gioi_tinh" id="gioiTinhNam" value="nam" checked="">
+                                                                                Nam
+                                                                                <i class="input-helper"></i>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-5">
+                                                                        <div class="form-check">
+                                                                            <label class="form-check-label">
+                                                                                <input type="radio" class="form-check-input" name="gioi_tinh" id="gioiTinhNu" value="nu">
+                                                                                Nữ
+                                                                                <i class="input-helper"></i>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label">
+                                                                        Quốc gia
+                                                                    </label>
+                                                                    <div class="col-sm-10">
+                                                                        <input type="text" id="quoc_gia_check_in" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label"></label>
+                                                                    <div class="col-sm-10">
+
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-2 col-form-label"></label>
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group row">
+                                                                            <div class="col-sm-5">
+                                                                                <button type="button" class="form-control btn btn-dark" id="them_khach_o">Thêm</button>
+                                                                            </div>
+                                                                            <div class="col-sm-5">
+                                                                                <button type="button" class="form-control btn btn-light" id="lam_moi_khach_o" l>Làm mới</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" id="ma_ctdp_checkin" />
+                    <button type="button" class="btn btn-primary" id="check_in_for_customer" data-bs-dismiss="modal">Nhận phòng cho khách</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                </div>
+            </div>
     </div>
 </div>

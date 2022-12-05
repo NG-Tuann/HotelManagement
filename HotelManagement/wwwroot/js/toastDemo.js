@@ -12,6 +12,46 @@
     })
   };
 
+    updateDepositSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Cập nhật tiền cọc thành công',
+            text: 'Cập nhật tiền cọc thành công cho đơn đặt. Hãy kiểm tra đơn đặt phòng !',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    updateDepositFailToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Cập nhật tiền cọc không thành công',
+            text: 'Cập nhật tiền cọc không thành công. Hãy kiểm tra lại trạng thái đơn đặt phòng !',
+            showHideTransition: 'slide',
+            icon: 'error',
+            loaderBg: '#dc3545',
+            position: 'bottom-left'
+        })
+    };
+
+
+    checkInSuccessToast = function() {
+    'use strict';
+      resetToastPosition();
+    $.toast({
+        heading: 'Nhận phòng thành công',
+        text: 'Nhận phòng cho khách thành công. Hãy kiểm tra trạng thái của các phòng đã nhận !',
+      showHideTransition: 'slide',
+      icon: 'success',
+      loaderBg: '#28a745',
+      position: 'bottom-left'
+    })
+  };
+
   deleteRoomTypeSuccessToast = function() {
     'use strict';
     resetToastPosition();

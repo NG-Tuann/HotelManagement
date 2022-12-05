@@ -24,7 +24,8 @@ namespace HotelManagement.Controllers
         private IRoomService _roomService;
         // GET: /<controller>/
 
-        public RoomController(IBaseRepository<Phong> phongRebo, IBaseRepository<Tang> tangRepo, IBaseRepository<LoaiPhong> loaiPhongRepo, IRoomService roomService)
+        public RoomController(IBaseRepository<Phong> phongRebo, IBaseRepository<Tang> tangRepo, IBaseRepository<LoaiPhong> loaiPhongRepo,
+                                IRoomService roomService)
         {
             _phongRepo = phongRebo;
             _tangRepo = tangRepo;
