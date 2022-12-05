@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using HotelManagement.Helpers;
 using HotelManagement.Models;
 using HotelManagement.Repositories;
 using HotelManagement.Services;
@@ -58,14 +59,44 @@ namespace HotelManagement.Controllers
                                           System.Globalization.CultureInfo.InvariantCulture);
                 List<Phong> pTrongs = _roomService.timPhongTrong(sDate, eDate);
 
+                var tangs = _tangRepo.GetAll().ToList();
+
+                // Loc ra nhung phong trong bo di nhung phong da dc dat
+
+                // Neu ko con phong trong se remove di het phong
+
+                if(pTrongs.Count == 0 || pTrongs == null)
+                {
+                    foreach (var tang in tangs)
+                    {
+                        tang.Phongs.Clear();
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < tangs.Count; i++)
+                    {
+                        // xoa phong theo duyet nguoc
+                        var soLuongPhongOTang = tangs[i].Phongs.Count;
+                        for (int j = soLuongPhongOTang-1; j >= 0; j--)
+                        {
+                            var phong = tangs[i].Phongs.ToList()[j];
+                            if (!(pTrongs.Contains(phong)))
+                            {
+                                tangs[i].Phongs.Remove(phong);
+                            }
+                        }
+                    }
+                }
+
                 // Truyen danh sach tang va phong sang view
-                ViewBag.tangs = _tangRepo.GetAll().ToList();
+                ViewBag.tangs = tangs;
 
                 // Truyen danh sach cac loai phong sang view
                 ViewBag.loaiPhongs = _loaiPhongRepo.GetAll().ToList();
 
-                // Truyen danh sach phong trong sang view
-                ViewBag.phongsTrong = pTrongs;
+                // Truyen ngay dat phong sang view
+                ViewBag.ngayDat = start_date + " - " + end_date;
 
                 return View("index");
             } catch(Exception e)
@@ -187,6 +218,12 @@ namespace HotelManagement.Controllers
             }
         }
 
-
+        [HttpPost]
+        [Route("tinh_gia_phong")]
+        public IActionResult TinhGiaPhong(string ngay_bd, string ngay_kt, int[] phong_so)
+        {
+            decimal? gia = _roomService.tinhGiaPhongTheoNgayTuanThang(ngay_bd, ngay_kt, phong_so);
+            return new JsonResult(gia);
+        }
     }
 }
