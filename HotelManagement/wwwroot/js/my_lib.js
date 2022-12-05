@@ -172,5 +172,65 @@
             });
         });
 
-        // 
+
+
+    //Service
+        // support get service id for delete
+    $('.dich_vu_action a').click(function () {
+        var madv = $(this).attr('id');
+        console.log("Ma dich vu: " + madv);
+        $.ajax({
+            type: 'GET',
+            data: {
+                ma_dv: madv
+            },
+            url: '/service/delete',
+            success: function (service) {
+                console.log(service);
+                $('#delete_service').text(service.tenDv);
+                $('#delete_service_id').val(service.madv);
+            }
+        });
     });
+    // support get id for update service
+    $('.dich_vu_action a').click(function () {
+        var maDv = $(this).attr('id');
+        console.log("Ma dich vu: " + maDv);
+
+        $.ajax({
+            type: 'GET',
+            data: {
+                ma_dv: maDv
+            },
+            url: '/service/update',
+            success: function (service) {
+                console.log(service);
+                $('#update_service_id').val(service.madv);
+                $('#ten_dich_vu_update').val(service.tenDv);
+                $('#don_gia_update').val(service.donGia);
+                $('#tinh_theo_update').val(service.tinhTheo);
+                $('#trang_thai_update').val(service.trangThai);
+                
+            }
+        });
+    });
+    //Receiption
+    // support get receiption id for delete
+    $('.hoa_don_action a').click(function () {
+        var maHd = $(this).attr('id');
+        console.log("Ma hoa don: " + maHd);
+        $.ajax({
+            type: 'GET',
+            data: {
+                ma_hd: maHd
+            },
+            url: '/receiption/delete',
+            success: function (receiption) {
+                console.log(receiption);
+                $('#delete_receiption_id').val(receiption.mahd);
+                $('#delete_receiption_id_text').text(receiption.mahd);
+            }
+        });
+    });
+   
+});
