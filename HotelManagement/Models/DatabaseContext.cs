@@ -514,18 +514,10 @@ namespace HotelManagement.Models
                     .IsUnicode(false)
                     .HasColumnName("EMAIL");
 
-                //entity.Property(e => e.NgayCap)
-                //    .HasColumnType("date")
-                //    .HasColumnName("NGAY_CAP");
-
                 entity.Property(e => e.NgaySinh)
                     .HasColumnType("date")
                     .HasColumnName("NGAY_SINH");
-
-                //entity.Property(e => e.NoiCap)
-                //    .HasMaxLength(50)
-                //    .HasColumnName("NOI_CAP");
-
+                    
                 entity.Property(e => e.QuocTich)
                     .HasMaxLength(50)
                     .IsUnicode(false)
