@@ -7,6 +7,7 @@ using HotelManagement.Models;
 using HotelManagement.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using HotelManagement.Helpers;
+using HotelManagement.Services;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,14 +21,37 @@ namespace HotelManagement.Controllers
         private IBaseRepository<KhachHang> _khachHangRepo;
         private IBaseRepository<ChiTietKhachO> _chiTietKhachO;
         private IBaseRepository<Phong> _phongRepo;
+        private IBookingService _bookingService;
 
-        public BookingController(IBaseRepository<DonDatPhong> donDatPhongRepo, IBaseRepository<ChiTietDatPhong> chiTietDatPhongRepo, IBaseRepository<KhachHang> khachHangRepo, IBaseRepository<ChiTietKhachO> chiTietKhachO, IBaseRepository<Phong> phongRepo)
+        public BookingController(IBaseRepository<DonDatPhong> donDatPhongRepo, IBaseRepository<ChiTietDatPhong> chiTietDatPhongRepo,
+                                 IBaseRepository<KhachHang> khachHangRepo, IBaseRepository<ChiTietKhachO> chiTietKhachO,
+                                 IBaseRepository<Phong> phongRepo, IBookingService bookingService)
         {
             _donDatPhongRepo = donDatPhongRepo;
             _chiTietDatPhongRepo = chiTietDatPhongRepo;
             _khachHangRepo = khachHangRepo;
             _chiTietKhachO = chiTietKhachO;
             _phongRepo = phongRepo;
+            _bookingService = bookingService;
+        }
+
+        [HttpPost]
+        [Route("capNhatTienCoc")]
+        public IActionResult CapNhatTienCoc(string ma_don_dat)
+        {
+            return new JsonResult(_bookingService.capNhatTienCocVaTrangThai(ma_don_dat));
+        }
+
+        [HttpGet]
+        [Route("findall")]
+        public IActionResult FindAll()
+        {
+            var result = _bookingService.donDatPhongs();
+            if(result.Count >0)
+            {
+                return new JsonResult(result);
+            }
+            return new JsonResult(null);
         }
 
         // GET: /<controller>/
@@ -105,7 +129,6 @@ namespace HotelManagement.Controllers
             don_dat_phong.Madd = "DD" + PrimaryKeyHelper.RandomString(3);
             don_dat_phong.TongTien = Convert.ToDecimal(tong_tien);
             don_dat_phong.MaTk = "QL001";
-            don_dat_phong.TrangThai = "Đợi nhận phòng";
             don_dat_phong.GhiChu = "Ok";
 
             var today = DateTime.Today;
@@ -116,15 +139,19 @@ namespace HotelManagement.Controllers
             don_dat_phong.NgayTao = ngay_tao;
             don_dat_phong.SoTienCoc = Convert.ToDecimal(tien_coc);
 
+            if(don_dat_phong.SoTienCoc == (don_dat_phong.TongTien / 2))
+            {
+                don_dat_phong.TrangThai = "Đã chuyển cọc";
+            }
+            else
+            {
+                don_dat_phong.TrangThai = "Đợi chuyển cọc";
+            }
+
             don_dat_phong.MaKhDat = danhSachKhachHang[danhSachKhachHang.Count-1].Makh;
 
             _donDatPhongRepo.Insert(don_dat_phong);
             _donDatPhongRepo.Save();
-
-            // Them vao chi tiet dat phong
-            var chi_tiet_dat_phong = new ChiTietDatPhong();
-
-            chi_tiet_dat_phong.MaDonDatPhong = don_dat_phong.Madd;
 
             // Neu dat nhieu phong trong 1 don dat
 
@@ -133,6 +160,15 @@ namespace HotelManagement.Controllers
                 string[] phongs = phong_so.Split(" - ");
                 for(int i =0;i<phongs.Length;i++)
                 {
+                    // Them vao chi tiet don dat
+                    // Tao 1 chi tiet don dat
+
+                    var chi_tiet_dat_phong = new ChiTietDatPhong();
+
+                    chi_tiet_dat_phong.MaDonDatPhong = don_dat_phong.Madd;
+
+                    chi_tiet_dat_phong.MaChiTietDonDat = "DP" + PrimaryKeyHelper.RandomString(3);
+
                     int phongSo = Convert.ToInt32(phongs[i]);
 
                     var phong = _phongRepo.GetAll().ToList().SingleOrDefault(i => i.PhongSo == phongSo);
@@ -146,6 +182,7 @@ namespace HotelManagement.Controllers
                                                  System.Globalization.CultureInfo.InvariantCulture);
                     chi_tiet_dat_phong.NgayThueBd = ngayThueBd;
                     chi_tiet_dat_phong.NgayThueKt = ngayThueKt;
+                    chi_tiet_dat_phong.TrangThai = "Đợi nhận phòng";
                     chi_tiet_dat_phong.GioVao = Convert.ToInt32(vao_luc);
                     chi_tiet_dat_phong.GioRa = Convert.ToInt32(roi_luc);
 
@@ -156,6 +193,16 @@ namespace HotelManagement.Controllers
             // Neu dat 1 phong trong 1 don dat
             else
             {
+                // Them vao chi tiet dat phong
+
+                // Tao 1 chi tiet don dat
+
+                var chi_tiet_dat_phong = new ChiTietDatPhong();
+
+                chi_tiet_dat_phong.MaDonDatPhong = don_dat_phong.Madd;
+
+                chi_tiet_dat_phong.MaChiTietDonDat = "DP" + PrimaryKeyHelper.RandomString(3);
+
                 int phongSo = Convert.ToInt32(phong_so);
 
                 var phong = _phongRepo.GetAll().ToList().SingleOrDefault(i => i.PhongSo == phongSo);
@@ -169,6 +216,7 @@ namespace HotelManagement.Controllers
                                              System.Globalization.CultureInfo.InvariantCulture);
                 chi_tiet_dat_phong.NgayThueBd = ngayThueBd;
                 chi_tiet_dat_phong.NgayThueKt = ngayThueKt;
+                chi_tiet_dat_phong.TrangThai = "Đợi nhận phòng";
                 chi_tiet_dat_phong.GioVao = Convert.ToInt32(vao_luc);
                 chi_tiet_dat_phong.GioRa = Convert.ToInt32(roi_luc);
 

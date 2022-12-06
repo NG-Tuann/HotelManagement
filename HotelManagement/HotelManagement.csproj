@@ -25,6 +25,7 @@
     <None Remove="Repositories\" />
     <None Remove="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <None Remove="Views\RoomType\" />
+    <None Remove="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -39,6 +40,7 @@
     <Folder Include="Views\Room\" />
     <Folder Include="Repositories\" />
     <Folder Include="Views\RoomType\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\" />

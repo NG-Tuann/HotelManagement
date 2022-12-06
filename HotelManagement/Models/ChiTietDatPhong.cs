@@ -13,6 +13,8 @@ namespace HotelManagement.Models
         public DateTime? NgayThueKt { get; set; }
         public int? GioVao { get; set; }
         public int? GioRa { get; set; }
+        public string MaChiTietDonDat { get; set; }
+        public string TrangThai { get; set; }
 
         public virtual DonDatPhong MaDonDatPhongNavigation { get; set; }
         public virtual Phong MaPhongNavigation { get; set; }
