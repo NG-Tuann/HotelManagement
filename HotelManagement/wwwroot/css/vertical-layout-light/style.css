@@ -8717,7 +8717,6 @@ body {
     color: #1F1F1F;
     text-align: left;
     /*  background-color: #fff;*/
-    background-image: url('~/images/Beach-Resort-Wallpaper-22-1920x1080.jpg');
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {

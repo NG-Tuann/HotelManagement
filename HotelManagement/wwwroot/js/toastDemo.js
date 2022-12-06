@@ -1,4 +1,80 @@
-(function($) {
+(function ($) {
+    //thong bao cho uan ly hoa don
+    deleteReceiptionSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Xoá hóa đơn thành công',
+            showHideTransition: 'slide',
+            icon: 'warning',
+            loaderBg: '#ffc107',
+            position: 'bottom-left'
+        })
+    };
+
+    deleteReceiptionFailToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Xóa hóa đơn thất bại',
+            showHideTransition: 'slide',
+            icon: 'error',
+            loaderBg: '#dc3545',
+            position: 'bottom-left'
+        })
+    };
+
+ 
+    // thong bao cho dich vu
+    updateServiceSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Cập nhật thành công',
+            text: 'Cập nhật danh sách dịch vụ thành công.',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    deleteServiceSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Xoá dịch vụ thành công',
+            showHideTransition: 'slide',
+            icon: 'warning',
+            loaderBg: '#ffc107',
+            position: 'bottom-left'
+        })
+    };
+
+    deleteServiceFailToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Xóa dịch vụ thất bại',
+            showHideTransition: 'slide',
+            icon: 'error',
+            loaderBg: '#dc3545',
+            position: 'bottom-left'
+        })
+    };
+
+    createServiceSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Thêm dịch vụ thành công',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+    // thong bao cho loai phong
   updateRoomTypeSuccessToast = function() {
     'use strict';
       resetToastPosition();

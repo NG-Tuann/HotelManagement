@@ -1,0 +1,154 @@
+﻿@using HotelManagement.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    Jquery and BS js
+*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+@*
+    Date picker
+*@
+<link rel="stylesheet" href="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
+<script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" defer></script>
+@*
+    Font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css" />
+@*
+    custom jquery
+*@
+<script src="~/js/my_lib.js"></script>
+@*
+    font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css">
+@*
+    Toasts
+*@
+
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        if ('@ViewBag.message' == "delete_receiption_success") {
+            console.log("delete_receiption_success");
+            deleteReceiptionSuccessToast();
+        }
+
+        if ('@ViewBag.message' == "delete_receiption_fail") {
+            console.log("delete_receiption_success");
+            deleteReceiptionSuccessToast();
+        }
+    });
+</script>
+ <div class="row-fluid">
+    <div class="col-xl-12 col-md-12">
+        <div class="row d-flex mt-4 flex-wrap">
+            <div class="col-sm-6">
+                <h2>Danh sách hóa đơn</h2>
+
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-2"></div>
+             <div class="col-sm-2">
+                  <button class="btn btn-outline-info btn-block">Làm mới <i class="fa fa-refresh"></i></button>
+             </div>
+        </div>
+     
+        <div class="row">
+            <div class="col-xl-12 col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã HĐ</th>
+                                <th>Phòng</th>
+                                <th>Tên khách hàng</th>
+                                <th>Tổng cộng</th>
+                                <th>Trạng thái  </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @foreach(var hd in ViewBag.hoaDons)
+                            {
+                                int i = 1;
+                                <tr>
+                                    <td>@i</td>
+                                    <td>@hd.Mahd</td>
+                                    <td>
+                                        <ul>
+                                            @foreach(var ctdp in @hd.MaDonDatNavigation.ChiTietDatPhongs)
+                                            {
+                                                <li>@ctdp.MaPhong</li>
+                                            }
+                                        </ul>
+                                    </td>
+                                    <td>@hd.MaDonDatNavigation.MaKhDatNavigation.TenKh</td>
+                                    
+                                    <td>
+                                        @{decimal tongTienDichVu=0;}
+                                            @foreach(var pdv in @hd.MaDonDatNavigation.PhieuDichVus)
+                                            {
+                                                tongTienDichVu = tongTienDichVu + @pdv.ThanhTien;
+                                            }
+                                        @{
+                                            decimal tongTien = @tongTienDichVu + @hd.MaDonDatNavigation.TongTien;
+                                        }
+                                        @tongTien
+
+                                    </td>
+                                    <td>@hd.TrangThai</td>
+                                    
+                                    <td class="hoa_don_action">
+                                        <a id="@hd.Mahd" data-bs-toggle="modal" data-bs-target="#confirm_delete_receiption" ><i class="fa fa-remove text-danger"></i></a>
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*
+    Modal for confirm receiption delete
+*@
+<div class="modal fade" id="confirm_delete_receiption" tabindex="-1" aria-labelledby="ModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Xác nhận xoá hóa đơn</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form method="post" asp-controller="receiption" asp-action="delete">
+                <div class="row-fluid">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                                <label class="col-md-12 col-form-label ml-2">Bạn có chắc chắn muốn xoá hóa đơn: <span id="delete_receiption_id_text" style="color:red"></span> </label>
+                            <input type="hidden" name="ma_hd" id="delete_receiption_id" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Xoá</button>
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Huỷ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@*
+    modal for viewing detail receiption
+*@
+
