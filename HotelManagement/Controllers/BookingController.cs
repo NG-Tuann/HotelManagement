@@ -167,7 +167,7 @@ namespace HotelManagement.Controllers
 
                     chi_tiet_dat_phong.MaDonDatPhong = don_dat_phong.Madd;
 
-                    chi_tiet_dat_phong.MaChiTietDonDat = "DP" + PrimaryKeyHelper.RandomString(3);
+                    chi_tiet_dat_phong.MaChiTietDatPhong = "DP" + PrimaryKeyHelper.RandomString(3);
 
                     int phongSo = Convert.ToInt32(phongs[i]);
 
@@ -201,7 +201,7 @@ namespace HotelManagement.Controllers
 
                 chi_tiet_dat_phong.MaDonDatPhong = don_dat_phong.Madd;
 
-                chi_tiet_dat_phong.MaChiTietDonDat = "DP" + PrimaryKeyHelper.RandomString(3);
+                chi_tiet_dat_phong.MaChiTietDatPhong = "DP" + PrimaryKeyHelper.RandomString(3);
 
                 int phongSo = Convert.ToInt32(phong_so);
 
@@ -222,23 +222,26 @@ namespace HotelManagement.Controllers
 
                 _chiTietDatPhongRepo.Insert(chi_tiet_dat_phong);
                 _chiTietDatPhongRepo.Save();
+
+                // Them vao chi tiet khach o
+
+                for (int i = 0; i < danhSachKhachHang.Count(); i++)
+                {
+                    var chi_tiet_khach_o = new ChiTietKhachO();
+
+                    // Sua khoa ngoai cua chi tiet khach o tham chieu den chi tiet dat phong
+                    //chi_tiet_khach_o.MaDonDat = don_dat_phong.Madd;
+
+
+                    chi_tiet_khach_o.MaChiTietDatPhong = chi_tiet_dat_phong.MaChiTietDatPhong;
+                    chi_tiet_khach_o.MaKhachO = danhSachKhachHang[i].Makh;
+
+                    _chiTietKhachO.Insert(chi_tiet_khach_o);
+                }
+                _chiTietKhachO.Save();
+
             }
-            // Them vao chi tiet khach o
-
-            for (int i = 0; i < danhSachKhachHang.Count(); i++)
-            {
-                var chi_tiet_khach_o = new ChiTietKhachO();
-
-                chi_tiet_khach_o.MaDonDat = don_dat_phong.Madd;
-                chi_tiet_khach_o.MaKhachO = danhSachKhachHang[i].Makh;
-
-                _chiTietKhachO.Insert(chi_tiet_khach_o);
-            }
-            _chiTietKhachO.Save();
-            
-            
-
-            return RedirectToAction("index","room");
+            return RedirectToAction("index","room", new { message = "create_booking_success" });
         }
     }
 }

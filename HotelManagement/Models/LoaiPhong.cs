@@ -16,8 +16,8 @@ namespace HotelManagement.Models
         public string LoaiPhong1 { get; set; }
         public string MaGia { get; set; }
         public string KhongGian { get; set; }
-        public int SoGiuong { get; set; }
-        public int SoNguoi { get; set; }
+        public int? SoGiuong { get; set; }
+        public int? SoNguoi { get; set; }
 
         public virtual GiaPhong MaGiaNavigation { get; set; }
         public virtual ICollection<Phong> Phongs { get; set; }

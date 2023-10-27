@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model HotelManagement.Models.TaiKhoan
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,6 +7,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Skydash Admin</title>
+    @*
+        Jquery and BS js
+    *@
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- plugins:css -->
     <link rel="stylesheet" href="~/vendors/feather/feather.css">
     <link rel="stylesheet" href="~/vendors/ti-icons/css/themify-icons.css">
@@ -17,8 +22,21 @@
     <link rel="stylesheet" href="~/css/vertical-layout-light/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="~/images/favicon.png" />
-</head>
 
+    @*
+        Toasts
+    *@
+    <script src="~/js/jquery.toast.min.js"></script>
+    <link href="~/css/vertical-layout-light/jquery.toast.min.css" rel="stylesheet" />
+    <script src="~/js/toastDemo.js"></script>
+
+    <script type="text/javascript">
+        if ('@ViewBag.message' == "register_success") {
+            console.log("register_success");
+            registerSuccessToast();
+        }
+    </script>
+</head>
 <body>
     <div class="container-scroller">
         <div class="container-fluid page-body-wrapper full-page-wrapper">
@@ -27,43 +45,59 @@
                     <div class="col-lg-4 mx-auto">
                         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
                             <div class="brand-logo">
-                                <img src="~/images/logo.svg" alt="logo">
+                                <a class="mr-5 text-primary" style="font-size:28px; font-weight:800" href="#">LaGestion</a>
                             </div>
-                            <h4>New here?</h4>
-                            <h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6>
-                            <form class="pt-3">
+                            <h4>Cấp tài khoản</h4>
+                            <h6 class="font-weight-light">Các nhân viên sẽ nhận được mật khẩu thông qua gmail!</h6>
+                            <form class="pt-3" method="post" asp-controller="account" asp-action="register">
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg" id="exampleInputUsername1" placeholder="Username">
+                                    <input type="text" class="form-control form-control-lg" asp-for="TenNv" id="ho_va_ten_dk" placeholder="Họ và tên">
+                                    <span style="color:red; font-size:14px;" asp-validation-for="TenNv"></span>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Email">
+                                    <input type="text" class="form-control form-control-lg" asp-for="Cmnd" id="cmnd_dk" placeholder="Chứng minh nhân dân">
+                                    <span style="color: red; font-size: 14px;" asp-validation-for="Cmnd"></span>
                                 </div>
-                                <div class="form-group">
-                                    <select class="form-control form-control-lg" id="exampleFormControlSelect2">
-                                        <option>Country</option>
-                                        <option>United States of America</option>
-                                        <option>United Kingdom</option>
-                                        <option>India</option>
-                                        <option>Germany</option>
-                                        <option>Argentina</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Password">
-                                </div>
-                                <div class="mb-4">
+                                <div class="form-group d-flex">
                                     <div class="form-check">
-                                        <label class="form-check-label text-muted">
-                                            <input type="checkbox" class="form-check-input">
-                                            I agree to all Terms & Conditions
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" asp-for="GioiTinh" id="nam_dk" value="1" checked="">
+                                            Nam
+                                            <i class="input-helper"></i>
                                         </label>
                                     </div>
+                                    <div class="form-check" style="margin-left:20px;">
+                                        <label class="form-check-label">
+                                            <input type="radio" class="form-check-input" asp-for="GioiTinh" id="nu_dk" value="2">
+                                            Nữ
+                                            <i class="input-helper"></i>
+                                        </label>
+                                    </div>
+                                    <span style="color: red; font-size: 14px;" asp-validation-for="GioiTinh"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="email" class="form-control form-control-lg" asp-for="TaiKhoan1" id="tai_khoan_dk" placeholder="Tài khoản">
+                                    <span style="color: red; font-size: 14px;" asp-validation-for="TaiKhoan1"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="ngay_sinh_dk" placeholder="Ngày sinh" asp-for="NgaySinh" class="form-control form-control-lg datepicker">
+                                    <span style="color: red; font-size: 14px;" asp-validation-for="NgaySinh"></span>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-control form-control-lg" asp-for="ChucVu" id="exampleFormControlSelect2">
+                                        <option value="">Chức vụ</option>
+                                        <option value="Lễ tân">Lễ tân</option>
+                                        <option value="Thu ngân">Thu ngân</option>
+                                        <option value="Kế toán">Kế toán</option>
+                                        <option value="Quản lý">Quản lý</option>
+                                    </select>
+                                    <span style="color: red; font-size: 14px;" asp-validation-for="ChucVu"></span>
                                 </div>
                                 <div class="mt-3">
-                                    <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="../../index.html">SIGN UP</a>
+                                    <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">ĐĂNG KÝ</button>
                                 </div>
-                                <div class="text-center mt-4 font-weight-light">
-                                    Already have an account? <a href="login.html" class="text-primary">Login</a>
+                                <div class="mt-3">
+                                    <button class="btn btn-block btn-outline-info btn-lg font-weight-medium auth-form-btn" asp-controller="room" asp-action="index">Trang chủ</button>
                                 </div>
                             </form>
                         </div>

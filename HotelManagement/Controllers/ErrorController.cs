@@ -23,5 +23,11 @@ namespace HotelManagement.Controllers
         {
             return View("Error500");
         }
+
+        [Route("403")]
+        public IActionResult Error403()
+        {
+            return View("Error403");
+        }
     }
 }

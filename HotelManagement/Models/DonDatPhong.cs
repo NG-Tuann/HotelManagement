@@ -10,9 +10,7 @@ namespace HotelManagement.Models
         public DonDatPhong()
         {
             ChiTietDatPhongs = new HashSet<ChiTietDatPhong>();
-            ChiTietKhachOs = new HashSet<ChiTietKhachO>();
             HoaDons = new HashSet<HoaDon>();
-            PhieuDichVus = new HashSet<PhieuDichVu>();
         }
 
         public string Madd { get; set; }
@@ -27,8 +25,6 @@ namespace HotelManagement.Models
         public virtual KhachHang MaKhDatNavigation { get; set; }
         public virtual TaiKhoan MaTkNavigation { get; set; }
         public virtual ICollection<ChiTietDatPhong> ChiTietDatPhongs { get; set; }
-        public virtual ICollection<ChiTietKhachO> ChiTietKhachOs { get; set; }
         public virtual ICollection<HoaDon> HoaDons { get; set; }
-        public virtual ICollection<PhieuDichVu> PhieuDichVus { get; set; }
     }
 }

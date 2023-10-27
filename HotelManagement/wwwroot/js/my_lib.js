@@ -131,25 +131,25 @@
             success: function (roomType) {
                 console.log(roomType);
 
-                $('#loai_phong_update').val(roomType.loaiPhong1);
-                $('#khong_gian_update').val(roomType.khongGian);
-                $('#so_giuong_update').val(roomType.soGiuong);
-                $('#so_nguoi_update').val(roomType.soNguoi);
+                $('#loai_phong_update').val(roomType.loaI_PHONG);
+                $('#khong_gian_update').val(roomType.khonG_GIAN);
+                $('#so_giuong_update').val(roomType.sO_GIUONG);
+                $('#so_nguoi_update').val(roomType.sO_NGUOI);
                 $('#update_roomtype_id').val(roomType.malp);
 
-                $('#gia_theo_gio_update').val(roomType.maGiaNavigation.giaTheoGio);
-                $('#gia_theo_ngay_update').val(roomType.maGiaNavigation.giaTheoNgay);
-                $('#gia_theo_tuan_update').val(roomType.maGiaNavigation.giaTheoTuan);
-                $('#gia_theo_thang_update').val(roomType.maGiaNavigation.giaTheoThang);
-                $('#ngay_hieu_luc_bd_update').val(roomType.maGiaNavigation.ngayHieuLucBd);
-                $('#ngay_hieu_luc_kt_update').val(roomType.maGiaNavigation.ngayHieuLucKt);
+                $('#gia_theo_gio_update').val(roomType.giA_THEO_GIO.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#gia_theo_ngay_update').val(roomType.giA_THEO_NGAY.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#gia_theo_tuan_update').val(roomType.giA_THEO_TUAN.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#gia_theo_thang_update').val(roomType.giA_THEO_THANG.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#ngay_hieu_luc_bd_update').val(roomType.ngaY_BD);
+                $('#ngay_hieu_luc_kt_update').val(roomType.ngaY_KT);
 
 
-                $('#qua_1h_update').val(roomType.maGiaNavigation.qua_1h);
-                $('#qua_2h_update').val(roomType.maGiaNavigation.qua_2h);
-                $('#truoc_3h_update').val(roomType.maGiaNavigation.truoc_3h);
-                $('#truoc_4h_update').val(roomType.maGiaNavigation.truoc_4h);
-                $('#update_price_id').val(roomType.maGiaNavigation.magia);
+                $('#qua_1h_update').val(roomType.quA1H.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#qua_2h_update').val(roomType.quA2H.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#truoc_3h_update').val(roomType.truoC3H.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#truoc_4h_update').val(roomType.truoC4H.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                $('#update_price_id').val(roomType.mA_GIA);
             }
         });
     });
@@ -202,7 +202,7 @@
                 console.log(service);
                 $('#update_service_id').val(service.madv);
                 $('#ten_dich_vu_update').val(service.tenDv);
-                $('#don_gia_update').val(service.donGia);
+                $('#don_gia_update').val(service.donGia.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
                 $('#tinh_theo_update').val(service.tinhTheo);
                 $('#trang_thai_update').val(service.trangThai);
 
@@ -216,65 +216,91 @@
         console.log("Ma hoa don: " + maHd);
         $('#delete_receiption_id').val(maHd);
         $('#delete_receiption_id_text').text(maHd);
-                
+
     });
 
 
     // them khach o vao table ben duoi don dat phong
 
+    // lay ve so luong khach toi da cua phong
+
     $('#them_khach_o').click(function () {
-        //var tong_tien = $('#tong_tien').val();
-        //var ngay_vao = $('#ngay_vao').val();
-        //var vao_luc = $('#vao_luc').val();
-        //var ngay_roi = $('#roi_luc').val();
-        //var tien_coc = $('#tien_coc').val();
-        //var phong_so = $('#phong_so').val();
-        //var ghi_chu = $('#ghi_chu').val();
+        var isExist = 0;
 
-        console.log("click");
+        $.each($("#ds_khach_o tbody").find("tr"), function () {
+            if ($(this).find("td:first").text() == $('#so_can_cuoc').val()) {
+                isExist = 1;
+            }
+        });
 
-        var so_can_cuoc = $('#so_can_cuoc').val();
-        var ho_ten = $('#ho_ten').val();
-        var email = $('#email_khach').val();
-        var ngay_sinh = $('#ngay_sinh').val();
-        var sdt = $('#sdt').val();
-        var gioi_tinh = $("input[name='gioi_tinh']:checked").val();
-        var quoc_gia = $('#quoc_gia').val();
+        if (isExist > 0) {
+            alert('Thông tin khách hàng bị trùng lắp');
+        }
+        else {
+            var phongSo = $('#phong_so').val();
+            var maximumGuest = 0;
+            $.ajax({
+                type: 'GET',
+                async: false,
+                data: {
+                    phongso: phongSo
+                },
+                url: '/room/so_luong_khach_chua',
+                success: function (data) {
+                    maximumGuest = data;
+                    console.log(data);
+                }
+            });
 
-        var row =
-            '<tr>' +
+            var currentAmountOfGuest = $('#ds_khach_o tbody tr').length;
 
-            `<td>${so_can_cuoc}</td>` +
-            `<input type="hidden" name="so_can_cuoc_kh" value="${so_can_cuoc}"/>` +
+            if (currentAmountOfGuest == (maximumGuest + 1)) {
+                alert('Số lượng khách trong phòng không thể vượt quá ' + (maximumGuest + 1) + ' !');
+            }
+            else {
+                var so_can_cuoc = $('#so_can_cuoc').val();
+                var ho_ten = $('#ho_ten').val();
+                var email = $('#email_khach').val();
+                var ngay_sinh = $('#ngay_sinh').val();
+                var sdt = $('#sdt').val();
+                var gioi_tinh = $("input[name='gioi_tinh']:checked").val();
+                var quoc_gia = $('#quoc_gia').val();
 
-            `<td>${ho_ten}</td>` +
-            `<input type="hidden" name="ho_ten_kh" value="${ho_ten}"/>` +
+                var row =
+                    '<tr>' +
 
-            `<td>${email}</td>` +
-            `<input type="hidden" name="email_kh" value="${email}"/>` +
+                    `<td>${so_can_cuoc}</td>` +
+                    `<input type="hidden" name="so_can_cuoc_kh" value="${so_can_cuoc}"/>` +
 
-            `<td>${ngay_sinh}</td>` +
-            `<input type="hidden" name="ngay_sinh_kh" value="${ngay_sinh}"/>` +
+                    `<td>${ho_ten}</td>` +
+                    `<input type="hidden" name="ho_ten_kh" value="${ho_ten}"/>` +
 
-            `<td>${sdt}</td>` +
-            `<input type="hidden"  name="sdt_kh" value="${sdt}"/>` +
+                    `<td>${email}</td>` +
+                    `<input type="hidden" name="email_kh" value="${email}"/>` +
 
-            `<td>${gioi_tinh}</td>` +
-            `<input type="hidden"  name="gioi_tinh_kh" value="${gioi_tinh}"/>` +
+                    `<td>${ngay_sinh}</td>` +
+                    `<input type="hidden" name="ngay_sinh_kh" value="${ngay_sinh}"/>` +
 
-            `<td>${quoc_gia}</td>` +
-            `<input type="hidden"  name="quoc_gia_kh" value="${quoc_gia}"/>` +
-            `
+                    `<td>${sdt}</td>` +
+                    `<input type="hidden"  name="sdt_kh" value="${sdt}"/>` +
+
+                    `<td>${gioi_tinh}</td>` +
+                    `<input type="hidden"  name="gioi_tinh_kh" value="${gioi_tinh}"/>` +
+
+                    `<td>${quoc_gia}</td>` +
+                    `<input type="hidden"  name="quoc_gia_kh" value="${quoc_gia}"/>` +
+                    `
                 <td class="khach_o_action">
                     <a id='${so_can_cuoc}' data-id="chinh_sua_khach_o" href="#" ><i class="fa fa-edit text-info"></i></a>
                     <br />
                     <a onClick="$(this).closest('tr').remove();" href="#"><i class="fa fa-remove text-danger"></i></a>
                 </td >`+
 
-            + '</tr > ';
+                    + '</tr > ';
 
-        $('#ds_khach_o tbody').prepend(row);
-
+                $('#ds_khach_o tbody').prepend(row);
+            }
+        }
     });
 
     // lam moi danh sach khach o
@@ -353,6 +379,9 @@
         }
         else {
             $('#create_booking_modal').modal('show');
+
+            $('#vao_luc').val('14');
+            $('#roi_luc').val('12');
             // khai bao chuoi chua cac phong duoc dat
 
             var result = '';
@@ -406,6 +435,7 @@
                 success: function (data) {
                     console.log(data);
                     $('#tong_tien').val(data);
+                    $('#tong_tien_dp').val(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
                 }
             });
         }
@@ -642,7 +672,8 @@
                                     <td>${result[i].mA_DON_DAT}</td>
                                     <td>${result[i].teN_KH}</td>
                                     <td class="text-danger">${result[i].tranG_THAI}   <i id="cap_nhat_tien_coc" data-value="${result[i].mA_DON_DAT}" class="fa fa-credit-card text-info"></i></td>
-                                    <td>${result[i].tonG_TIEN}</td >
+                                    <td data-value="${result[i].tonG_TIEN}">${result[i].tonG_TIEN.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>
+                                    <td>${result[i].tieN_COC.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>
                                     <td>
                                         <a class="text-info" id="${result[i].mA_DON_DAT}" ><i class="ti-check-box"></i> Xem chi tiết</a>
                                     </td>
@@ -657,7 +688,8 @@
                                     <td>${result[i].mA_DON_DAT}</td>
                                     <td>${result[i].teN_KH}</td>
                                     <td class="text-success">${result[i].tranG_THAI}</td>
-                                    <td>${result[i].tonG_TIEN}</td >
+                                    <td>${result[i].tonG_TIEN.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td >
+                                    <td>${result[i].tieN_COC.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>
                                     <td>
                                         <a class="text-info" id="${result[i].mA_DON_DAT}" ><i class="ti-check-box"></i> Xem chi tiết</a>
                                     </td>
@@ -689,6 +721,8 @@
                     }
                 }
             });
+            console.log("Tong tien: "+$(this).parents('tr').find('td:eq(3)').attr('data-value'));
+            $(this).parents('tr').find('td:eq(4)').text(parseFloat($(this).parents('tr').find('td:eq(3)').attr('data-value') / 2).toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
             $(this).closest('td').removeClass('text-danger').addClass('text-success').html('Đã chuyển cọc');
         } else {
 
@@ -786,6 +820,14 @@
 
                     $('#ngay_roi_checkin').val(eDate);
                     $('#ngay_vao_checkin').val(sDate);
+
+                    // Lay gio ra he thong
+                    var dt = new Date();
+                    var time = dt.getHours();
+
+                    // Gan gio vao
+
+                    $('#vao_luc_checkin').val(time);
                     $('#roi_luc_checkin').val(result.giO_RA);
                     $('#phong_so_checkin').val(result.phonG_SO);
                     $('#ghi_chu_checkin').val(result.ghI_CHU);
@@ -813,8 +855,8 @@
                         },
                         url: '/room/tinh_gia_phong',
                         success: function (data) {
-                            $('#tong_tien_checkin').val(data);
-                            $('#tien_coc_checkin').val(data * 1 / 2);
+                            $('#tong_tien_checkin').val(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                            $('#tien_coc_checkin').val((data * 1 / 2).toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
                         }
                     });
                 }
@@ -892,8 +934,8 @@
                                 },
                                 url: '/room/tinh_gia_phong',
                                 success: function (data) {
-                                    $('#tong_tien_checkin').val(data);
-                                    $('#tien_coc_checkin').val(data * 1 / 2);
+                                    $('#tong_tien_checkin').val(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                                    $('#tien_coc_checkin').val((data * 1 / 2).toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
                                     assignRoomCheckIn(phongs);
                                 }
                             });
@@ -944,17 +986,21 @@
 
                     // Cap nhat lai trang thai cho ctdp tren man hinh
 
-                    $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
-                        if ($(this).attr('id') == ma_ctdd) {
-                            $(this).find("td:last").html('<i><b>Đã nhận phòng</b></i>  <i class="fa fa-check text-success"></i>');
-                            $(this).removeClass('chosen');
-                            checkInSuccessToast();
-                            return;
-                        }
-                    });
+                    if (data == 'Nhận phòng thành công') {
+                        $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
+                            if ($(this).attr('id') == ma_ctdd) {
+                                $(this).find("td:last").html('Đã nhận phòng');
+                                $(this).removeClass('chosen');
+                                checkInSuccessToast();
+                                return;
+                            }
+                        });
+                    }
+                    else {
+                        checkInFailToast();
+                    }
                 }
             });
-
         }
 
         // Neu check in nhieu hon 1 phong
@@ -974,20 +1020,373 @@
                     url: '/chi_tiet_dat_phong/nhan_phong_theo_ma_ct_dondat',
                     success: function (data) {
                         console.log(data);
+                        if (data == 'Nhận phòng thành công') {
+                            // Cap nhat lai trang thai cho ctdp tren man hinh
 
-                        // Cap nhat lai trang thai cho ctdp tren man hinh
-
-                        $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
-                            if ($(this).attr('id') == ctdps[i]) {
-                                $(this).find("td:last").html('<i><b>Đã nhận phòng</b></i>  <i class="fa fa-check text-success"></i>');
-                                $(this).removeClass('chosen');
-                                return;
-                            }
-                        });
+                            $.each($("#cac_don_dat_phong tbody").find("tr"), function () {
+                                if ($(this).attr('id') == ctdps[i]) {
+                                    $(this).find("td:last").html('Đã nhận phòng');
+                                    $(this).removeClass('chosen');
+                                    return;
+                                }
+                            });
+                            checkInSuccessToast();
+                        }
+                        else {
+                            checkInFailToast();
+                        }
                     }
                 });
             }
-            checkInSuccessToast();
+        }
+
+        // Them phieu dich vu neu co
+
+        $.each($("#dich_vu_su_dung tbody").find("tr"), function () {
+            var madv = $(this).attr('data-value');
+            var so_luong = $('#' + madv + '_soluong').val();
+            var don_gia = $('#' + madv + '_dongia').val();
+            var thanh_tien = $('#' + madv + '_thanhtien').val();
+            var mactdp = '';
+            if (phongCheckIn.length == 3) {
+                mactdp = ma_ctdd;
+            } else {
+                const ctdps = ma_ctdd.split(' - ');
+                mactdp = ctdps[0];
+            }
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_dv: madv,
+                    ma_ctdp: mactdp,
+                    so_luong: so_luong,
+                    gia: don_gia,
+                    thanh_tien: thanh_tien
+                },
+                url: '/service_bill/create',
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+
+        });
+
+    });
+
+    // Them phieu dich vu khi nhan phong
+    $('#them_phieu_dich_vu').click(function () {
+        var dichvu = $('#ten_dichvu').find('option:selected').val();
+        var soluong = $('#so_luong_dichvu').val();
+        var flag = 0;
+        console.log(dichvu);
+        console.log(soluong);
+
+        $.ajax({
+            type: 'GET',
+            data: {
+                ma_dv: dichvu
+            },
+            url: '/service/get_service_by_id',
+            success: function (data) {
+                console.log(data);
+
+                // kiem tra dich vu da nam trong bang phieu dich vu chua
+
+                $.each($("#dich_vu_su_dung tbody").find("tr"), function () {
+                    if ($(this).attr('data-value') == dichvu) {
+                        console.log('Da ton tai');
+
+                        // Cong don so luong
+                        var soLuong = parseInt($(this).find('td:eq(2)').text()) + parseInt(soluong);
+                        $(this).find("td:eq(2)").text(soLuong);
+
+                        // Parse lai tu dinh dang vnd
+                        var result = $(this).find("td:eq(1)").text().split(" ");
+                        // Lay ve don gia 
+
+                        var donGiaReparse = result[0].replace('.', '');
+                        console.log(donGiaReparse);
+
+                        // Tinh lai thanh tien
+                        $(this).find("td:eq(3)").text((parseFloat(donGiaReparse) * parseInt($(this).find("td:eq(2)").text())));
+
+                        // Cap nhat value lai cho cac input field hidden
+
+                        $('#' + dichvu + '_soluong').val(soLuong);
+                        $('#' + dichvu + '_thanhtien').val(parseFloat(donGiaReparse) * parseInt(soLuong));
+                        flag++;
+                    }
+                });
+
+                if (flag > 0) {
+
+                }
+                else {
+                    var row =
+                        `<tr data-value="${data.madv}">` +
+
+                        `<td>${data.tenDv}</td>` +
+                        `<input id="${data.madv}_tendv" type="hidden" name="ten_dv" value="${data.tenDv}"/>` +
+
+                        `<td>${parseFloat(data.donGia)}</td>` +
+                        `<input id="${data.madv}_dongia" type="hidden" name="don_gia_dv" value="${data.donGia}"/>` +
+                        `<td>${soluong}</td>` +
+                        `<input id="${data.madv}_soluong" type="hidden" name="so_luong_dv" value="${soluong}"/>` +
+                        `<td>${parseFloat(data.donGia * soluong)}</td>` +
+                        `<input id="${data.madv}_thanhtien" type="hidden" name="thanh_tien_dv" value="${parseFloat(data.donGia * soluong)}"/>` +
+                        `
+                    <td class="phieu_dich_vu_action">
+                        <a onClick="$(this).closest('tr').remove();" href="#"><i class="fa fa-remove text-danger"></i></a>
+                    </td >`+
+
+                        + '</tr > ';
+
+                    $('#dich_vu_su_dung tbody').prepend(row);
+                }
+            }
+        });
+
+    });
+
+    // Check out 1 phong
+
+    $('a[data-id=tra_phong]').click(function () {
+        $('#creat_checkout').modal('show');
+        var phongso = $(this).attr('id');
+        var sDate = '';
+        var eDate = '';
+        var maDd = '';
+        var ma_ctdp = '';
+        var gio_vao = '';
+        var gio_ra = '';
+        var tong_khach_o = 0;
+
+        var tienPhong = 0;
+        var phuThu = 0;
+        var tienDichVu = 0;
+        var tienCoc = 0;
+
+        console.log(phongso);
+        if (phongso != null) {
+            $.ajax({
+                type: 'GET',
+                data: {
+                    phongso: phongso
+                },
+                url: '/receiption/find_checkout_view_by_phso',
+                async: false,
+                success: function (data) {
+                    console.log(data);
+
+                    ma_ctdp = data.mA_CTDP;
+                    maDd = data.mA_DON_DAT;
+
+                    $('#tenKh_hoadon').text(data.teN_KH);
+                    $('#maDonDat_hoadon').text(data.mA_DON_DAT);
+                    // Gan gio vao
+                    gio_vao = data.giO_VAO
+                    $('#gioVao_hoadon').text(data.giO_VAO);
+
+                    // Lay gio ra he thong
+                    var dt = new Date();
+                    var time = dt.getHours();
+
+                    // Gan gio ra
+                    gio_ra = time;
+                    $('#gioRoi_hoadon').text(time);
+
+                    var s = data.ngaY_VAO.substring(0, 10).split('-');
+                    sDate = s[2] + '/' + s[1] + '/' + s[0];
+
+                    var x = data.ngaY_ROI.substring(0, 10).split('-');
+                    eDate = x[2] + '/' + x[1] + '/' + x[0];
+
+                    $('#phongSo_hoadon').text(phongso);
+
+                    $('#ngayVao_hoadon').text(sDate);
+                    $('#ngayRoi_hoadon').text(eDate);
+                    tienCoc = data.tieN_COC;
+                    $('#tienCoc_hoadon').text(tienCoc.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+
+                    const date1 = new Date(data.ngaY_VAO.substring(0, 10));
+                    console.log(date1);
+                    const date2 = new Date(data.ngaY_ROI.substring(0, 10));
+                    console.log(date2);
+
+                    const diffTime = Math.abs(date2 - date1);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays < 7) {
+                        $('#tinhTheo_hoadon').text('Ngày');
+                    }
+                    else if (diffDays < 30) {
+                        $('#tinhTheo_hoadon').text('Tuần');
+                    }
+                    else {
+                        $('#tinhTheo_hoadon').text('Tháng');
+                    }
+                }
+            });
+            // Tim ve so luong khach o trong phong de tinh phu thu them khach neu co
+
+            var maximumGuest = 0;
+            $.ajax({
+                type: 'GET',
+                async: false,
+                data: {
+                    phongso: phongso
+                },
+                url: '/room/so_luong_khach_chua',
+                success: function (data) {
+                    maximumGuest = data;
+                    console.log(data);
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_ctdp: ma_ctdp
+                },
+                async: false,
+                url: '/chi_tiet_dat_phong/tong_khach_o',
+                success: function (data) {
+                    console.log("Tong khach o: " + data);
+                    tong_khach_o = data;
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ngay_bd: sDate,
+                    ngay_kt: eDate,
+                    phong_so: phongso
+                },
+                async: false,
+                url: '/room/tinh_gia_phong',
+                success: function (data) {
+                    console.log("Gia phong: " + data);
+                    tienPhong = data;
+
+                    $('#tienPhong_hoadon').text(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                }
+            });
+
+            
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    phongso: phongso,
+                    giovao: gio_vao,
+                    giora: gio_ra
+                },
+                async: false,
+                url: '/receiption/kiem_tra_phu_thu',
+                success: function (data) {
+                    console.log(data.tonG_PHU_THU);
+                    phuThu = data.tonG_PHU_THU;
+
+                    if (tong_khach_o - maximumGuest > 0) {
+                        data.tonG_PHU_THU += 200000;
+                    }
+
+                    $('#phuThu_hoadon').text(data.tonG_PHU_THU.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                    var lyDoPhuThu = '';
+
+                    if (tong_khach_o - maximumGuest > 0) {
+                        $('#lyDoPhuThuThemNguoi_hoadon').text('*Phụ thu thêm một người');
+                    }
+
+                    if (14 - parseInt(gio_vao) > 3) {
+                        lyDoPhuThu += '*Phụ thu do check in sớm 4 tiếng -';
+                    } else if (14 - parseInt(gio_vao) > 2) {
+                        lyDoPhuThu += '*Phụ thu do check in sớm 3 tiếng -';
+                    }
+
+                    if (parseInt(gio_ra) - 12 > 1) {
+                        lyDoPhuThu += '* Phụ thu check out trễ 2 tiếng ';
+                    } else if (parseInt(gio_ra) - 12 > 0) {
+                        lyDoPhuThu += '* Phụ thu check out trễ 1 tiếng ';
+                    }
+
+                    $('#lyDoPhuThu_hoadon').text(lyDoPhuThu)
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ngay_bd: sDate,
+                    ngay_kt: eDate,
+                    phong_so: phongso
+                },
+                async: false,
+                url: '/room/tinh_gia_phong',
+                success: function (data) {
+                    console.log("Gia phong: " + data);
+                    tienPhong = data;
+                    $('#tienPhong_hoadon').text(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_ctdp: ma_ctdp
+                },
+                async: false,
+                url: '/receiption/tim_phieu_dich_vu_by_mactdp',
+                success: function (data) {
+                    console.log(data);
+                    var rows = '';
+                    if (data.length > 0) {
+                        for (let i = 0; i < data.length; i++) {
+                            rows += '<tr>' + `<td>${data[i].teN_DICH_VU}</td>` +
+                                `<td>${data[i].doN_GIA.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>` +
+                                `<td>${data[i].sO_LUONG}</td>` +
+                                `<td><b>${data[i].thanH_TIEN.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</b></td>` + '</tr > ';
+                        }
+                        $('#dich_vu_su_dung_hoadon tbody').html(rows);
+                    }
+                    else {
+                        $('#dich_vu_su_dung_hoadon tbody').html('');
+                    }
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                data: {
+                    ma_ctdp: ma_ctdp
+                },
+                async: false,
+                url: '/receiption/tinh_tong_tien_phieu_dich_vu_by_mactdp',
+                success: function (data) {
+                    console.log(data);
+                    tienDichVu = data;
+                    $('#tienDichVu_hoadon').text(data.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+                }
+            });
+
+            var tongTien = 0;
+            console.log("PP: "+tienPhong);
+            console.log("PPP: "+ parseFloat(phuThu));
+            console.log("PPPP: " + tienDichVu);
+            tongTien = tienPhong + phuThu + tienDichVu - tienCoc;
+            console.log(tongTien);
+
+            $('#thanhToan_hoadon').text(tongTien.toLocaleString('it-IT', { style: 'currency', currency: 'VND' }));
+            // Gan value cho cac hidden input for form submit
+
+            $('#ma_don_dat_hoadon').val(maDd);
+            $('#tong_tien_hoadon').val(tongTien);
+            $('#phu_thu_hoadon').val(phuThu);
+            $('#phong_so_hoadon').val(phongso);
+            $('#ma_ctdp_hoadon').val(ma_ctdp);
+            $('#gio_ra_hoadon').val(gio_ra);
         }
     });
 

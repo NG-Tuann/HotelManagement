@@ -7,5 +7,6 @@ namespace HotelManagement.ViewModels
         public String TEN_KH { get; set; }
         public decimal TONG_TIEN { get; set; }
         public string TRANG_THAI { get; set; }
+        public decimal TIEN_COC { get; set; }
     }
 }

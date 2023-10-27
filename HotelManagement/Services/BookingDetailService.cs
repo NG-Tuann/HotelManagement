@@ -91,10 +91,10 @@ namespace HotelManagement.Services
         {
             try
             {
-                var ctdp = _db.ChiTietDatPhongs.ToList().SingleOrDefault(i => i.MaChiTietDonDat == ma_ct_dp);
+                var ctdp = _db.ChiTietDatPhongs.ToList().SingleOrDefault(i => i.MaChiTietDatPhong == ma_ct_dp);
                 if(ctdp !=null)
                 {
-                    ctdp.TrangThai = "<i><b>Đã nhận phòng</b></i>  <i class='fa fa-check text-success'></i>";
+                    ctdp.TrangThai = "Đã nhận phòng";
                     _db.ChiTietDatPhongs.Update(ctdp);
                     _db.SaveChanges();
 
@@ -115,11 +115,22 @@ namespace HotelManagement.Services
                     return "Nhận phòng ko thành công";
                 }
             }
-            catch (SqlException e)
+            catch (DbUpdateException e)
             {
-                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.InnerException.Message);
                 return "Nhận phòng ko thành công";
             }
+            catch (SqlException e )
+            {
+                Debug.WriteLine(e.InnerException.Message);
+                return "Nhận phòng ko thành công";
+            }
+        }
+
+        public int totalGuestStay(string ma_ctdp)
+        {
+            var ctdp = _db.ChiTietDatPhongs.ToList().SingleOrDefault(p => p.MaChiTietDatPhong == ma_ctdp);
+            return ctdp.ChiTietKhachOs.ToList().Count();
         }
     }
 }

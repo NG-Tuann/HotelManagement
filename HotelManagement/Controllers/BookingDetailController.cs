@@ -20,6 +20,14 @@ namespace HotelManagement.Controllers
             _bookingDetailService = bookingDetailService;
         }
 
+        [HttpPost]
+        [Route("tong_khach_o")]
+        public IActionResult TongKhachO(string ma_ctdp)
+        {
+            return new JsonResult(_bookingDetailService.totalGuestStay(ma_ctdp));
+        }
+
+
         [HttpGet]
         [Route("tim_tat_ca_chitietdondat")]
         public IActionResult TimTatCa()

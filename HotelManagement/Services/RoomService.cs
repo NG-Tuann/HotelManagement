@@ -36,6 +36,12 @@ namespace HotelManagement.Services
             
         }
 
+        public int soLuongKhachChua(int phongso)
+        {
+            var phong = _db.Phongs.ToList().SingleOrDefault(p => p.PhongSo == phongso);
+            return (int)phong.MaLpNavigation.SoNguoi;
+        }
+
         public decimal? tinhGiaPhongTheoNgayTuanThang(string ngay_bd, string ngay_kt, int[] phong_so)
         {
 
