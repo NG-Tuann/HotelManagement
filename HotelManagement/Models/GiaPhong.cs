@@ -20,10 +20,10 @@ namespace HotelManagement.Models
         public DateTime? NgayHieuLucBd { get; set; }
         public DateTime? NgayHieuLucKt { get; set; }
         public string GhiChu { get; set; }
-        public decimal? Qua_1h { get; set; }
-        public decimal? Qua_2h { get; set; }
-        public decimal? Truoc_3h { get; set; }
-        public decimal? Truoc_4h { get; set; }
+        public decimal? Qua1h { get; set; }
+        public decimal? Qua2h { get; set; }
+        public decimal? Truoc3h { get; set; }
+        public decimal? Truoc4h { get; set; }
 
         public virtual ICollection<LoaiPhong> LoaiPhongs { get; set; }
     }

@@ -1,5 +1,6 @@
 (function ($) {
     //thong bao cho uan ly hoa don
+
     deleteReceiptionSuccessToast = function () {
         'use strict';
         resetToastPosition();
@@ -8,6 +9,71 @@
             showHideTransition: 'slide',
             icon: 'warning',
             loaderBg: '#ffc107',
+            position: 'bottom-left'
+        })
+    };
+
+    changePasswordSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Đổi mật khẩu thành công',
+            text: 'Mật khẩu đã được đổi mật khẩu thành công',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    registerSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Đăng ký thành công',
+            text: 'Mật khẩu đã được gửi đến mail của nhân viên',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    loginSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Đăng nhập thành công',
+            text: 'Hãy bắt đầu một ngày làm việc năng động đi nào bạn của tôi ơi.',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    createReceiptionSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Tạo hoá đơn và trả phòng thành công',
+            text: 'Kiểm tra lại tình trạng phòng và danh sách các hoá đơn!',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
+    passwordSendToMailToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Xác thực thành công tài khoản',
+            text: 'Mật khẩu mới đã được gửi đến tài khoản vừa xác thực. Vui lòng kiểm tra!',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
             position: 'bottom-left'
         })
     };
@@ -39,6 +105,19 @@
         })
     };
 
+    createBookingSuccessToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Đặt phòng thành công',
+            text: 'Đặt phòng thành công. Kiểm tra lại từ danh sách đơn đặt.',
+            showHideTransition: 'slide',
+            icon: 'success',
+            loaderBg: '#28a745',
+            position: 'bottom-left'
+        })
+    };
+
     deleteServiceSuccessToast = function () {
         'use strict';
         resetToastPosition();
@@ -48,6 +127,32 @@
             icon: 'warning',
             loaderBg: '#ffc107',
             position: 'bottom-left'
+        })
+    };
+
+    inValidUserToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Tài khoản này không tồn tại ',
+            text: 'Tài khoản này không tồn tại hoặc chưa được đăng ký trước đó !',
+            showHideTransition: 'slide',
+            icon: 'warning',
+            loaderBg: '#57c7d4',
+            position: 'top-right'
+        })
+    };
+
+    wrongPasswordToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Mật khẩu không trùng khớp với tài khoản',
+            text: 'Mật khẩu không trùng khớp với tài khoản. Kiểm tra lại mật khẩu !',
+            showHideTransition: 'slide',
+            icon: 'warning',
+            loaderBg: '#57c7d4',
+            position: 'top-right'
         })
     };
 
@@ -126,7 +231,20 @@
       loaderBg: '#28a745',
       position: 'bottom-left'
     })
-  };
+    };
+
+    checkInFailToast = function () {
+        'use strict';
+        resetToastPosition();
+        $.toast({
+            heading: 'Nhận phòng ko thành công',
+            text: 'Nhận phòng cho khách ko thành công. Hãy kiểm tra ngay thue bd !',
+            showHideTransition: 'slide',
+            icon: 'error',
+            loaderBg: '#dc3545',
+            position: 'bottom-left'
+        })
+    };
 
   deleteRoomTypeSuccessToast = function() {
     'use strict';

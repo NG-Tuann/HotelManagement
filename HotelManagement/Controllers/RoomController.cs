@@ -21,30 +21,63 @@ namespace HotelManagement.Controllers
         private IBaseRepository<Phong> _phongRepo;
         private IBaseRepository<Tang> _tangRepo;
         private IBaseRepository<LoaiPhong> _loaiPhongRepo;
+        private IBaseRepository<DichVu> _dichVuRepo;
         private IRoomService _roomService;
         // GET: /<controller>/
 
         public RoomController(IBaseRepository<Phong> phongRebo, IBaseRepository<Tang> tangRepo, IBaseRepository<LoaiPhong> loaiPhongRepo,
-                                IRoomService roomService)
+                                IRoomService roomService, IBaseRepository<DichVu> dichVuRepo)
         {
             _phongRepo = phongRebo;
             _tangRepo = tangRepo;
             _loaiPhongRepo = loaiPhongRepo;
             _roomService = roomService;
+            _dichVuRepo = dichVuRepo;
         }
 
         [Route("index")]
-        [Route("~/")]
         [Route("")]
-        public IActionResult Index()
+        public IActionResult Index(string message)
         {
+            if (!string.IsNullOrEmpty(message))
+            {
+                Debug.WriteLine("Message: " + message);
+                ViewBag.message = message;
+            }
             Debug.WriteLine("So luong phong hien tai: "+_phongRepo.GetAll().ToList().Count);
             // Truyen danh sach tang va phong sang view
             ViewBag.tangs = _tangRepo.GetAll().ToList();
             // Truyen danh sach cac loai phong sang view
             ViewBag.loaiPhongs = _loaiPhongRepo.GetAll().ToList();
+            // Truyen dang sach cac dich vu
+            ViewBag.dichVus = _dichVuRepo.GetAll().ToList();
             // Truyen danh sach phong trong
             return View();
+        }
+
+        [HttpGet]
+        [Route("filter_room_by_check_in")]
+        public IActionResult filterRoomByCheckIn()
+        {
+            var tangs = _tangRepo.GetAll().ToList();
+            for (int i = 0; i < tangs.Count; i++)
+            {
+                var phongs = tangs[i].Phongs.ToList();
+                for (int j = 0; j < phongs.Count; j++)
+                {
+                    if(!(phongs[j].TinhTrang == "Khách đang ở"))
+                    {
+                        tangs[i].Phongs.Remove(phongs[j]);
+                    }
+                }
+            }
+            ViewBag.tangs = tangs;
+            // Truyen danh sach cac loai phong sang view
+            ViewBag.loaiPhongs = _loaiPhongRepo.GetAll().ToList();
+            // Truyen dang sach cac dich vu
+            ViewBag.dichVus = _dichVuRepo.GetAll().ToList();
+            // Truyen danh sach phong trong
+            return View("index");
         }
 
         [HttpGet]
@@ -98,6 +131,9 @@ namespace HotelManagement.Controllers
 
                 // Truyen ngay dat phong sang view
                 ViewBag.ngayDat = start_date + " - " + end_date;
+
+                // Truyen dang sach cac dich vu
+                ViewBag.dichVus = _dichVuRepo.GetAll().ToList();
 
                 return View("index");
             } catch(Exception e)
@@ -179,7 +215,15 @@ namespace HotelManagement.Controllers
         {
             int roomId = Convert.ToInt32(room_id);
             var phong = _phongRepo.GetAll().SingleOrDefault(i => i.PhongSo == roomId);
-            return new JsonResult(phong);
+
+            var phongUpdate = new Phong();
+            phongUpdate.Maphong = phong.Maphong;
+            phongUpdate.MaTang = phong.MaTang;
+            phongUpdate.MaLp = phong.MaLp;
+            phongUpdate.PhongSo = phong.PhongSo;
+            phongUpdate.TinhTrang = phong.TinhTrang;
+
+            return new JsonResult(phongUpdate);
         }
 
         [HttpPost]
@@ -225,6 +269,14 @@ namespace HotelManagement.Controllers
         {
             decimal? gia = _roomService.tinhGiaPhongTheoNgayTuanThang(ngay_bd, ngay_kt, phong_so);
             return new JsonResult(gia);
+        }
+
+        [HttpGet]
+        [Route("so_luong_khach_chua")]
+        public IActionResult TinhGiaPhong(int phongso)
+        {
+            int soLuongKhach = _roomService.soLuongKhachChua(phongso);
+            return new JsonResult(soLuongKhach);
         }
     }
 }

@@ -1,0 +1,75 @@
+﻿@using HotelManagement.Models
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@*
+    Jquery and BS js
+*@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+@*
+    Date picker
+*@
+<link rel="stylesheet" href="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css" />
+<script src="~/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js" defer></script>
+@*
+    Font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css" />
+@*
+    custom jquery
+*@
+<script src="~/js/my_lib.js"></script>
+@*
+    font awesome
+*@
+<link rel="stylesheet" href="~/vendors/font-awesome/css/font-awesome.min.css">
+@*
+    Toasts
+*@
+<script src="~/js/jquery.toast.min.js"></script>
+<link href="~/css/vertical-layout-light/jquery.toast.min.css" rel="stylesheet" />
+<script src="~/js/toastDemo.js"></script>
+<div class="row-fluid">
+    <div class="col-xl-12 col-md-12">
+        <div class="row d-flex flex-wrap mt-4 justify-content-end">
+            <div class="col-md-2 mb-3">
+                <a class="btn btn-outline-info btn-block" asp-controller="account" asp-action="index" >Làm mới <i class="fa fa-refresh"></i></a>
+            </div>
+            <div class="col-md-2 mb-3">
+                <a class="btn btn-primary btn-block" asp-controller="account" asp-action="register">Thêm tài khoản</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-12 col-md-12">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tên nhân viên</th>
+                                <th>Giới tính</th>
+                                <th>Email</th>
+                                <th>Chức vụ</th>
+                                <th>Ngày sinh</th>
+                                <th>Chứng minh nhân dân</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var tk in ViewBag.taiKhoans)
+                            {
+                                <tr>
+                                    <td>@tk.TenNv</td>
+                                    <td>@(tk.GioiTinh == 1? "Nam" : "Nữ")</td>
+                                    <td>@tk.TaiKhoan1</td>
+                                    <td>@tk.ChucVu</td>
+                                    <td>@tk.NgaySinh</td>
+                                    <td>@tk.Cmnd</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

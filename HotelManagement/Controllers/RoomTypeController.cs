@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HotelManagement.Helpers;
 using HotelManagement.Models;
 using HotelManagement.Repositories;
+using HotelManagement.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -19,11 +20,13 @@ namespace HotelManagement.Controllers
         private IBaseRepository<LoaiPhong> _loaiPhongRepo;
         private IBaseRepository<GiaPhong> _giaPhongRepo;
         private IBaseRepository<Phong> _phongRepo;
-        public RoomTypeController(IBaseRepository<LoaiPhong> loaiPhongRepo, IBaseRepository<GiaPhong> giaPhongRepo, IBaseRepository<Phong> phongRepo)
+        private IRoomTypeService _roomTypeService;
+        public RoomTypeController(IBaseRepository<LoaiPhong> loaiPhongRepo, IBaseRepository<GiaPhong> giaPhongRepo, IBaseRepository<Phong> phongRepo, IRoomTypeService roomTypeService)
         {
             _loaiPhongRepo = loaiPhongRepo;
             _giaPhongRepo = giaPhongRepo;
             _phongRepo = phongRepo;
+            _roomTypeService = roomTypeService;
         }
         // GET: /<controller>/
         [Route("")]
@@ -43,7 +46,7 @@ namespace HotelManagement.Controllers
         [Route("update")]
         public IActionResult Update(String ma_lp)
         {
-            var loai_phong = _loaiPhongRepo.GetAll().SingleOrDefault(i => i.Malp == ma_lp);
+            var loai_phong = _roomTypeService.timLoaiPhong(ma_lp);
             return new JsonResult(loai_phong);
         }
 
@@ -117,10 +120,10 @@ namespace HotelManagement.Controllers
             {
                 Debug.WriteLine(e.Message);
             }
-            giaPhongUpdate.Qua_1h = Convert.ToDecimal(qua_1h);
-            giaPhongUpdate.Qua_2h = Convert.ToDecimal(qua_2h);
-            giaPhongUpdate.Truoc_3h = Convert.ToDecimal(truoc_3h);
-            giaPhongUpdate.Truoc_4h = Convert.ToDecimal(truoc_4h);
+            giaPhongUpdate.Qua1h = Convert.ToDecimal(qua_1h);
+            giaPhongUpdate.Qua2h = Convert.ToDecimal(qua_2h);
+            giaPhongUpdate.Truoc3h = Convert.ToDecimal(truoc_3h);
+            giaPhongUpdate.Truoc4h = Convert.ToDecimal(truoc_4h);
 
             // Tao moi loai phong va gan cai dat gia
             var loaiPhongUpdate = _loaiPhongRepo.GetAll().SingleOrDefault(i => i.Malp == update_roomtype_id);
@@ -179,10 +182,10 @@ namespace HotelManagement.Controllers
             {
                 Debug.WriteLine(e.Message);
             }
-            newGiaPhong.Qua_1h = Convert.ToDecimal(qua_1h);
-            newGiaPhong.Qua_2h = Convert.ToDecimal(qua_2h);
-            newGiaPhong.Truoc_3h = Convert.ToDecimal(truoc_3h);
-            newGiaPhong.Truoc_4h = Convert.ToDecimal(truoc_4h);
+            newGiaPhong.Qua1h = Convert.ToDecimal(qua_1h);
+            newGiaPhong.Qua2h = Convert.ToDecimal(qua_2h);
+            newGiaPhong.Truoc3h = Convert.ToDecimal(truoc_3h);
+            newGiaPhong.Truoc4h = Convert.ToDecimal(truoc_4h);
 
             // Tao moi loai phong va gan cai dat gia
             var newLoaiPhong = new LoaiPhong();

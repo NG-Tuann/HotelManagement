@@ -34,13 +34,38 @@ namespace HotelManagement.Controllers
             return View();
         }
 
+        [HttpGet]
+        [Route("get_service_by_id")]
+        public IActionResult GetServiceById(String ma_dv)
+        {
+            var dich_vu = _dichVuRepo.GetAll().ToList().SingleOrDefault(i => i.Madv == ma_dv);
+            var dichVu = new DichVu();
+
+            dichVu.Madv = dich_vu.Madv;
+            dichVu.TenDv = dich_vu.TenDv;
+            dichVu.DonGia = dich_vu.DonGia;
+            dichVu.NgayTao = dich_vu.NgayTao;
+            dichVu.TinhTheo = dich_vu.TinhTheo;
+            dichVu.TrangThai = dich_vu.TrangThai;
+
+            return new JsonResult(dichVu);
+        }
 
         [HttpGet]
         [Route("update")]
         public IActionResult Update(String ma_dv)
         {
-            var dich_vu = _dichVuRepo.GetAll().SingleOrDefault(i => i.Madv == ma_dv);
-            return new JsonResult(dich_vu);
+            var dich_vu = _dichVuRepo.GetAll().ToList().SingleOrDefault(i => i.Madv == ma_dv);
+            var dichVu = new DichVu();
+
+            dichVu.Madv = dich_vu.Madv;
+            dichVu.TenDv = dich_vu.TenDv;
+            dichVu.DonGia = dich_vu.DonGia;
+            dichVu.NgayTao = dich_vu.NgayTao;
+            dichVu.TinhTheo = dich_vu.TinhTheo;
+            dichVu.TrangThai = dich_vu.TrangThai;
+
+            return new JsonResult(dichVu);
         }
 
         [HttpGet]

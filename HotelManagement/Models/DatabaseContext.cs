@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Dynamic;
 using HotelManagement.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -38,14 +34,34 @@ namespace HotelManagement.Models
         public virtual DbSet<Phong> Phongs { get; set; }
         public virtual DbSet<TaiKhoan> TaiKhoans { get; set; }
         public virtual DbSet<Tang> Tangs { get; set; }
+
         public virtual DbSet<ChiTietDatPhongView> ChiTietDatPhongViews { get; set; }
         public virtual DbSet<KhachHangCuView> KhachHangCuViews { get; set; }
         public virtual DbSet<CheckInView> CheckInViews { get; set; }
         public virtual DbSet<DonDatPhongView> DonDatPhongViews { get; set; }
+        public virtual DbSet<LoaiPhongView> LoaiPhongViews { get; set; }
+        public virtual DbSet<CheckOutView> CheckOutViews { get; set; }
+        public virtual DbSet<PhuThu> PhuThus { get; set; }
+        public virtual DbSet<PhieuDichVuView> PhieuDichVuViews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<PhieuDichVuView>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
+            modelBuilder.Entity<CheckOutView>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
+            modelBuilder.Entity<PhuThu>(entity =>
+            {
+                entity.HasNoKey();
+            });
 
             modelBuilder.Entity<ChiTietDatPhongView>(entity =>
             {
@@ -64,6 +80,11 @@ namespace HotelManagement.Models
 
 
             modelBuilder.Entity<KhachHangCuView>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
+            modelBuilder.Entity<LoaiPhongView>(entity =>
             {
                 entity.HasNoKey();
             });
@@ -105,26 +126,34 @@ namespace HotelManagement.Models
 
             modelBuilder.Entity<ChiTietDatPhong>(entity =>
             {
-                entity.HasKey(e => new { e.MaDonDatPhong, e.MaPhong })
-                    .HasName("PK__CHI_TIET__A6E69B3E820E97FA");
+                entity.HasKey(e => e.MaChiTietDatPhong)
+                    .HasName("PK__tmp_ms_x__5BF4D0D0FCE9FCC3");
 
                 entity.ToTable("CHI_TIET_DAT_PHONG");
 
+                entity.Property(e => e.MaChiTietDatPhong)
+                    .HasMaxLength(5)
+                    .IsUnicode(false)
+                    .HasColumnName("MA_CHI_TIET_DAT_PHONG")
+                    .IsFixedLength(true);
+
+                entity.Property(e => e.GioRa).HasColumnName("GIO_RA");
+
+                entity.Property(e => e.GioVao).HasColumnName("GIO_VAO");
+
                 entity.Property(e => e.MaDonDatPhong)
+                    .IsRequired()
                     .HasMaxLength(5)
                     .IsUnicode(false)
                     .HasColumnName("MA_DON_DAT_PHONG")
                     .IsFixedLength(true);
 
                 entity.Property(e => e.MaPhong)
+                    .IsRequired()
                     .HasMaxLength(5)
                     .IsUnicode(false)
                     .HasColumnName("MA_PHONG")
                     .IsFixedLength(true);
-
-                entity.Property(e => e.GioRa).HasColumnName("GIO_RA");
-
-                entity.Property(e => e.GioVao).HasColumnName("GIO_VAO");
 
                 entity.Property(e => e.NgayThueBd)
                     .HasColumnType("date")
@@ -134,33 +163,27 @@ namespace HotelManagement.Models
                     .HasColumnType("date")
                     .HasColumnName("NGAY_THUE_KT");
 
+                entity.Property(e => e.TrangThai)
+                    .HasMaxLength(100)
+                    .HasColumnName("TRANG_THAI");
+
                 entity.HasOne(d => d.MaDonDatPhongNavigation)
                     .WithMany(p => p.ChiTietDatPhongs)
                     .HasForeignKey(d => d.MaDonDatPhong)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CHI_TIET___MA_DO__4D94879B");
+                    .HasConstraintName("FK__CHI_TIET___MA_DO__753864A1");
 
                 entity.HasOne(d => d.MaPhongNavigation)
                     .WithMany(p => p.ChiTietDatPhongs)
                     .HasForeignKey(d => d.MaPhong)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CHI_TIET___MA_PH__4E88ABD4");
-
-                entity.Property(e => e.MaChiTietDonDat)
-                    .HasMaxLength(5)
-                    .IsUnicode(false)
-                    .HasColumnName("MA_CHI_TIET_DAT_PHONG")
-                    .IsFixedLength(true);
-
-                entity.Property(e => e.TrangThai)
-                    .HasMaxLength(100)
-                    .HasColumnName("TRANG_THAI");
+                    .HasConstraintName("FK__CHI_TIET___MA_PH__74444068");
             });
 
             modelBuilder.Entity<ChiTietKhachO>(entity =>
             {
-                entity.HasKey(e => new { e.MaKhachO, e.MaDonDat })
-                    .HasName("PK__CHI_TIET__25C63A4FEB62704B");
+                entity.HasKey(e => new { e.MaKhachO, e.MaChiTietDatPhong })
+                    .HasName("PK__CHI_TIET__728659F1FA5B7719");
 
                 entity.ToTable("CHI_TIET_KHACH_O");
 
@@ -170,23 +193,23 @@ namespace HotelManagement.Models
                     .HasColumnName("MA_KHACH_O")
                     .IsFixedLength(true);
 
-                entity.Property(e => e.MaDonDat)
+                entity.Property(e => e.MaChiTietDatPhong)
                     .HasMaxLength(5)
                     .IsUnicode(false)
-                    .HasColumnName("MA_DON_DAT")
+                    .HasColumnName("MA_CHI_TIET_DAT_PHONG")
                     .IsFixedLength(true);
 
-                entity.HasOne(d => d.MaDonDatNavigation)
+                entity.HasOne(d => d.MaChiTietDatPhongNavigation)
                     .WithMany(p => p.ChiTietKhachOs)
-                    .HasForeignKey(d => d.MaDonDat)
+                    .HasForeignKey(d => d.MaChiTietDatPhong)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CHI_TIET___MA_DO__4AB81AF0");
+                    .HasConstraintName("FK__CHI_TIET___MA_CH__220B0B18");
 
                 entity.HasOne(d => d.MaKhachONavigation)
                     .WithMany(p => p.ChiTietKhachOs)
                     .HasForeignKey(d => d.MaKhachO)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__CHI_TIET___MA_KH__49C3F6B7");
+                    .HasConstraintName("FK__CHI_TIET___MA_KH__2116E6DF");
             });
 
             modelBuilder.Entity<CtBcDoanhThuNgay>(entity =>
@@ -459,16 +482,20 @@ namespace HotelManagement.Models
                 entity.Property(e => e.NgayHieuLucKt)
                     .HasColumnType("date")
                     .HasColumnName("NGAY_HIEU_LUC_KT");
-                entity.Property(e => e.Qua_1h)
+
+                entity.Property(e => e.Qua1h)
                     .HasColumnType("money")
                     .HasColumnName("QUA_1H");
-                entity.Property(e => e.Qua_2h)
+
+                entity.Property(e => e.Qua2h)
                     .HasColumnType("money")
                     .HasColumnName("QUA_2H");
-                entity.Property(e => e.Truoc_3h)
+
+                entity.Property(e => e.Truoc3h)
                     .HasColumnType("money")
                     .HasColumnName("TRUOC_3H");
-                entity.Property(e => e.Truoc_4h)
+
+                entity.Property(e => e.Truoc4h)
                     .HasColumnType("money")
                     .HasColumnName("TRUOC_4H");
             });
@@ -543,7 +570,6 @@ namespace HotelManagement.Models
                     .IsFixedLength(true);
 
                 entity.Property(e => e.Cmnd)
-                    .IsRequired()
                     .HasMaxLength(12)
                     .IsUnicode(false)
                     .HasColumnName("CMND")
@@ -554,10 +580,12 @@ namespace HotelManagement.Models
                     .IsUnicode(false)
                     .HasColumnName("EMAIL");
 
+                entity.Property(e => e.GioiTinh).HasColumnName("GIOI_TINH");
+
                 entity.Property(e => e.NgaySinh)
                     .HasColumnType("date")
                     .HasColumnName("NGAY_SINH");
-                    
+
                 entity.Property(e => e.QuocTich)
                     .HasMaxLength(50)
                     .IsUnicode(false)
@@ -572,8 +600,6 @@ namespace HotelManagement.Models
                 entity.Property(e => e.TenKh)
                     .HasMaxLength(100)
                     .HasColumnName("TEN_KH");
-
-                entity.Property(e => e.GioiTinh).HasColumnName("GIOI_TINH");
             });
 
             modelBuilder.Entity<LoaiPhong>(entity =>
@@ -603,18 +629,19 @@ namespace HotelManagement.Models
                     .HasColumnName("MA_GIA")
                     .IsFixedLength(true);
 
+                entity.Property(e => e.SoGiuong).HasColumnName("SO_GIUONG");
+
+                entity.Property(e => e.SoNguoi).HasColumnName("SO_NGUOI");
+
                 entity.HasOne(d => d.MaGiaNavigation)
                     .WithMany(p => p.LoaiPhongs)
                     .HasForeignKey(d => d.MaGia)
                     .HasConstraintName("FK__LOAI_PHON__MA_GI__3B75D760");
-                entity.Property(e => e.SoGiuong).HasColumnName("SO_GIUONG");
-                entity.Property(e => e.SoNguoi).HasColumnName("SO_NGUOI");
             });
 
             modelBuilder.Entity<PhieuDichVu>(entity =>
             {
-                entity.HasKey(e => new { e.MaDv, e.MaDonDat })
-                    .HasName("PK__PHIEU_DI__111E7440740645CF");
+                entity.HasKey(e => new { e.MaDv, e.MaCtdp });
 
                 entity.ToTable("PHIEU_DICH_VU");
 
@@ -624,10 +651,10 @@ namespace HotelManagement.Models
                     .HasColumnName("MA_DV")
                     .IsFixedLength(true);
 
-                entity.Property(e => e.MaDonDat)
+                entity.Property(e => e.MaCtdp)
                     .HasMaxLength(5)
                     .IsUnicode(false)
-                    .HasColumnName("MA_DON_DAT")
+                    .HasColumnName("MA_CTDP")
                     .IsFixedLength(true);
 
                 entity.Property(e => e.Gia)
@@ -640,17 +667,17 @@ namespace HotelManagement.Models
                     .HasColumnType("money")
                     .HasColumnName("THANH_TIEN");
 
-                entity.HasOne(d => d.MaDonDatNavigation)
+                entity.HasOne(d => d.MaCtdpNavigation)
                     .WithMany(p => p.PhieuDichVus)
-                    .HasForeignKey(d => d.MaDonDat)
+                    .HasForeignKey(d => d.MaCtdp)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PHIEU_DIC__MA_DO__5FB337D6");
+                    .HasConstraintName("FK_PHIEU_DICH_VU_CTDP");
 
                 entity.HasOne(d => d.MaDvNavigation)
                     .WithMany(p => p.PhieuDichVus)
                     .HasForeignKey(d => d.MaDv)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__PHIEU_DIC__MA_DV__5EBF139D");
+                    .HasConstraintName("FK_PHIEU_DICH_VU_DV");
             });
 
             modelBuilder.Entity<Phong>(entity =>
@@ -763,14 +790,7 @@ namespace HotelManagement.Models
                 entity.Property(e => e.Tang1).HasColumnName("TANG");
             });
 
-
-
             OnModelCreatingPartial(modelBuilder);
-        }
-
-        internal object CollectionFromSql(string sql, Dictionary<string, object> dictionary)
-        {
-            throw new NotImplementedException();
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

@@ -8,9 +8,9 @@ namespace HotelManagement.Models
     public partial class ChiTietKhachO
     {
         public string MaKhachO { get; set; }
-        public string MaDonDat { get; set; }
+        public string MaChiTietDatPhong { get; set; }
 
-        public virtual DonDatPhong MaDonDatNavigation { get; set; }
+        public virtual ChiTietDatPhong MaChiTietDatPhongNavigation { get; set; }
         public virtual KhachHang MaKhachONavigation { get; set; }
     }
 }

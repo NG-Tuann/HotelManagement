@@ -90,7 +90,7 @@
                                     </td>
                                     <td>@hd.MaDonDatNavigation.MaKhDatNavigation.TenKh</td>
                                     
-                                    <td>
+                                    @*<td>
                                         @{decimal tongTienDichVu=0;}
                                             @foreach(var pdv in @hd.MaDonDatNavigation.PhieuDichVus)
                                             {
@@ -101,6 +101,9 @@
                                         }
                                         @tongTien
 
+                                    </td>*@
+                                    <td>
+                                        @hd.TongTien
                                     </td>
                                     <td>@hd.TrangThai</td>
                                     

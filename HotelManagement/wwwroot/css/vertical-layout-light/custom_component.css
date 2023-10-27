@@ -87,10 +87,10 @@
     background-color: #4B47AB;
 }
 
-.chosen_room {
-    background-color: #ffc107;
-}
-
 .staying_room {
     background-color: #dc3545;
+}
+
+.chosen_room {
+    background-color: #ffc107;
 }

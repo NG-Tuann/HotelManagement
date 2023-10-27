@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using HotelManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using HotelManagement.Repositories;
+using HotelManagement.MiddleWares;
 using HotelManagement.Services;
 
 namespace HotelManagement
@@ -25,18 +26,22 @@ namespace HotelManagement
             // Cau hinh cho doi tuong tra ve khong moc' noi' du lieu voi nhau qua dai
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            // Su dung session login logout
+            services.AddSession();
 
             var connectionString = _configuration["ConnectionStrings:DefaultConnection"].ToString();
             services.AddDbContext<DatabaseContext>(option => option.UseLazyLoadingProxies().UseSqlServer(connectionString));
 
-            // inject repo
+            //inject repo
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
-            // dependency inject
+            //dependency inject
             services.AddScoped<IRoomService, RoomService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<IBookingDetailService, BookingDetailService>();
             services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IRoomTypeService, RoomTypeService>();
+            services.AddScoped<ICheckOutService, CheckOutService>();
         }
 
         public Startup(IConfiguration configuration)
@@ -55,6 +60,10 @@ namespace HotelManagement
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
+
+            app.UseMiddleware<AuthenticationMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
